@@ -10,4 +10,22 @@ O princípio de uma inteligência artificial é a capacidade de um sistema reali
 
 Já o Machine Learning, subcampo da IA, é um modelo de inteligência artificial que não depende somente de algoritmos pré-programados, mas é também capaz de "aprender" a partir de dados para realizar uma tarefa em específico. É necessária a intervenção humana para a caracterização dos dados.
 
-O Deep Learning é outro subcampo da IA, onde o algoritmo do modelo possui mais camadas de processamento de informações e dados, tornando suas respostas mais coerentes com o assunto abordado e, dependendo da situação em que for aplicado, mais precisas.
+O Deep Learning é um subcampo do Machine Learning, onde o algoritmo do modelo possui mais camadas de processamento de informações e dados (redes neurais), tornando suas respostas mais coerentes com o assunto abordado e, dependendo da situação em que for aplicado, mais precisas.
+
+\subsection{Como os modelos GPT estão organizados?}
+Os modelos GPT são baseados na arquitetura Transformer e utilizam uma estrutura do tipo decoder-only. Eles processam o texto como uma sequência de tokens e, a partir do contexto anterior, aprendem a prever o próximo token.
+
+\subsection{Quais são as principais etapas do treinamento de um LLM?}
+A LLM possui 2 principais etapas de treinamento que são, pre training e o fine Tunning, durante a fase de pre training o modelo recebe uma vasta quantidades de dados possibilitando ele ser capaz de "aprender" a linguagem humana, sendo capaz de detectar padrões e prever a próxima palavra / token em sequencia. 
+
+Após o pré treinamento é realizado a etapa do Fine Tunning, aonde o modelo recebe dados numa proporção menor, porém com um determinado foco, direcionando e treinando o modelo para ter um melhor desempenho para uma tarefa especifica. nesse Fine Tunning consiste 2 principais tipos:
+\begin{itemize}
+    \item Classification Fine Tunning: que consiste em fazer o modelo ser capaz de classificar textos em diversas categorias específicas, como por exemplo no livro é tratado os e-mails de spam e não spam.
+    \item Instruction Fine Tunning: consiste em fazer o modelo ser capaz de "compreender" instruções e conseguir gerar respostas adequadas com oque foi solicitado.
+\end{itemize}
+
+\subsection{Qual é o fluxo geral de funcionamento de um modelo de linguagem?}
+O modelo recebe um texto, transforma-o em tokens, processa esses tokens para identificar padrões e prevê o próximo token. Esse processo é repetido várias vezes até formar o texto de saída.
+
+Exemplo:
+Texto → Tokenização → Tokens → Modelo de linguagem → Previsão do próximo token → Repetição → Texto gerado
