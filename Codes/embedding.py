@@ -1,5 +1,6 @@
 import urllib.request # Importa uma url
 import re # Regular expression 
+from Codes.tokenizer_v1 import SimpleTokenizerV1 # classe do tokenizador completo
 
 url = ("https://raw.githubusercontent.com/rasbt/"
  "LLMs-from-scratch/main/ch02/01_main-chapter-code/"
@@ -12,8 +13,8 @@ urllib.request.urlretrieve(url, file_path)
 with open("the-verdict.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
 
-print("Total number of character:", len(raw_text))
-print(raw_text[:99])
+# print("Total number of character:", len(raw_text))
+# print(raw_text[:99])
 
 # Tokenizer básico
 # text = "Criando Nossa LLM--;.?_."
@@ -24,18 +25,25 @@ print(raw_text[:99])
 # 1. Tokenizer básico com o texto importado como entrada
 preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text) # Separa o texto em tokens
 preprocessed = [item.strip() for item in preprocessed if item.strip()] 
-print(len(preprocessed)) # Retorna a quantidade de tokens no texto (sem espaços)
-print(preprocessed[:30]) # Retorna os 30 primeiros tokens.
+# print(len(preprocessed)) # Retorna a quantidade de tokens no texto (sem espaços)
+# print(preprocessed[:30]) # Retorna os 30 primeiros tokens.
 
 # 2. Token iD
 all_words = sorted(set(preprocessed)) # Constrói uma coleção de tokens únicos e ordena em ordem alfabética
-vocab_size = len(all_words)
-print(vocab_size)
+# vocab_size = len(all_words)
+# print(vocab_size)
 
 vocab = {token:integer for integer,token in enumerate(all_words)} # Constrói um vocabulário enumerado.
 
-for i, item in enumerate(vocab.items()):
-    print(item)
+# for i, item in enumerate(vocab.items()):
+#     print(item)
 
-    if i >= 50:
-        break
+#    if i >= 50:
+#        break
+
+tokenizer = SimpleTokenizerV1(vocab)
+text = """"It's the last he painted, you know,"
+Mrs. Gisburn said with pardonable pride."""
+ids = tokenizer.encode(text)
+print(ids) # Exibe os token IDs
+print(tokenizer.decode(ids)) # Exibe o token a partir do ID
