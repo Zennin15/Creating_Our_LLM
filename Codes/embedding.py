@@ -1,6 +1,6 @@
 import urllib.request # Importa uma url
 import re # Regular expression 
-from Codes.tokenizer_v1 import SimpleTokenizerV1 # classe do tokenizador completo
+from tokenizer_v2 import SimpleTokenizerV2 # classe do tokenizador_v1
 
 url = ("https://raw.githubusercontent.com/rasbt/"
  "LLMs-from-scratch/main/ch02/01_main-chapter-code/"
@@ -29,11 +29,12 @@ preprocessed = [item.strip() for item in preprocessed if item.strip()]
 # print(preprocessed[:30]) # Retorna os 30 primeiros tokens.
 
 # 2. Token iD
-all_words = sorted(set(preprocessed)) # Constrói uma coleção de tokens únicos e ordena em ordem alfabética
-# vocab_size = len(all_words)
-# print(vocab_size)
+all_tokens = sorted(list(set(preprocessed))) # Constrói uma coleção de tokens únicos e ordena em ordem alfabética (adição: tranforma a coleção em uma lista)
+all_tokens.extend(["<|endoftext|>", "<|unk|>"]) # Transformando a coleção em uma lista, conseguimos usar "extend" que adiciona elementos ao final da lista.
+                                                # Nesse caso, adicionamos dois tokens: "<|endoftext|>" que indica o fim de um texto
+                                                # e "<|unk|>", que indica um token que não está no vocabulário.
 
-vocab = {token:integer for integer,token in enumerate(all_words)} # Constrói um vocabulário enumerado.
+vocab = {token:integer for integer,token in enumerate(all_tokens)} # Constrói um vocabulário enumerado.
 
 # for i, item in enumerate(vocab.items()):
 #     print(item)
@@ -41,9 +42,21 @@ vocab = {token:integer for integer,token in enumerate(all_words)} # Constrói um
 #    if i >= 50:
 #        break
 
-tokenizer = SimpleTokenizerV1(vocab)
-text = """"It's the last he painted, you know,"
-Mrs. Gisburn said with pardonable pride."""
-ids = tokenizer.encode(text)
-print(ids) # Exibe os token IDs
-print(tokenizer.decode(ids)) # Exibe o token a partir do ID
+# tokenizer = SimpleTokenizerV1(vocab)
+# text = """"It's the last he painted, you know,"
+# Mrs. Gisburn said with pardonable pride."""
+# ids = tokenizer.encode(text)
+# print(ids) # Exibe os token IDs
+# print(tokenizer.decode(ids)) # Exibe o token a partir do ID
+
+# Dois textos diferentes serão separados com endoftext
+text1 = "Hello, do you like tea?"
+text2 = "In the sunlit terraces of the palace."
+text = " <|endoftext|> ".join((text1, text2))
+print(text)
+
+# Palavras que não estão no vocabulário serão marcadas como unk
+tokenizer = SimpleTokenizerV2(vocab)
+print(tokenizer.encode(text))
+
+print(tokenizer.decode(tokenizer.encode(text)))
