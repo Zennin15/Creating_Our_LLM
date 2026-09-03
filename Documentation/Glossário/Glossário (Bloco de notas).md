@@ -1,3 +1,7 @@
+**CAPÍTULO 1:**
+
+
+
 **Termos Técnicos**
 
 
@@ -103,6 +107,82 @@
 
 
 6\. Ushered: Inaugurou, conduziu.
+
+
+
+**CAPÍTULO 2:**
+
+
+
+1. Byte Pair Encoding (Codificação de Pares de Bytes): Algoritmo que implementa o processo de tokenização. Utilizado por modelos GPT.
+
+
+
+Função: Codificar (token -> ID) 
+
+&#x09;Exemplo de código: tiktoken.get\_encoding("gpt2")
+
+&#x09;
+
+&#x09;Decodificar (ID -> token)
+
+&#x09;Exemplo de código: tiktoken.get\_decoding("gpt2")
+
+
+
+2\. Embedding (incorporação): Processo onde convertemos dados em um vetor representante. Existem diversos tipos de embedding, o que será utilizado durante o projeto será o word embedding. 
+
+
+
+Função: Modelos de rede neural, como as LLMs, não conseguem processar dados brutos diretamente. Os dados brutos são incompatíveis com as operações matemáticas usadas para implementar e treinar as redes neurais. Por isso, transformamos os dados em vetores com valores decimais representando os dados de interesse. 
+
+
+
+3\. Input-Target pairs (Pares de Entrada-Alvo): Dados de entrada e alvo no processo de treinamento de uma LLM.
+
+
+
+Função: São usados para o modelo prever a próxima palavra em uma sequência (target) dado um entrada (input). Os dados que estão além do target são mascarados, forçando o modelo prever uma palavra por vez.  
+
+
+
+4\. Tokenizing (tokenização): Processo onde transformamos todas as palavras e caracteres especiais (como sinais de pontuação) de um texto de entrada em tokens individuais.
+
+
+
+Função: Os tokens individuais podem ser posteriormente mapeados com token IDs, uma etapa necessária para o embedding. Além disso, LLMs GPT-like são treinadas palavra por palavra, sendo assim a separação em tokens permite ao modelo identificar separadamente cada palavra e caractere em um texto de entrada, facilitando o entendimento do contexto e a predição da próxima palavra na sequência.
+
+
+
+5\. Token ID: Número único de identificação de um token individual.
+
+
+
+Função: Por serem valores inteiros, são transformados em um vetor pelo método embedding. 
+
+
+
+6\. Vocabulary (vocabulário): Um vocabulário onde são mapeados (ou relacionados) os tokens e seus respectivos IDs, semelhante a um dicionário.
+
+
+
+Função: Serve como uma tabela ou lista onde o modelo pode consultar o ID de um token e vice-versa.
+
+
+
+7\. Word embeddings (incorporação de palavra): Tipo de embedding onde utilizamos dados textuais que são utilizados para o treinamento de LLMs.
+
+
+
+Função: São utilizados para treinar uma LLM com dados textuais transformados em vetores representantes.  
+
+
+
+
+
+&#x20;
+
+
 
 
 
