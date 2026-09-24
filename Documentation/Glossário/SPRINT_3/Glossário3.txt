@@ -1,0 +1,34 @@
+CAPÍTULO 3:
+
+1. Attention Mechanism: Mecanismos de atenção transformam elementos de entrada em representações vetoriais de contexto aprimoradas, que incorporam informações de todas as entradas.
+
+2. Self-attention mechanism: Calcula o vetor de contexto como a soma ponderada das entradas.
+
+3. Dot products: Uma maneira concisa de multiplicar dois vetores elemento a elemento e, em seguida, somar os produtos.
+
+Função: É uma medida de similaridade porque quantifica o grau de alinhamento entre dois vetores: um produto escalar mais elevado indica um maior grau de alinhamento ou similaridade entre os vetores. No contexto de mecanismos de autoatenção, o produto escalar determina em que medida cada elemento de uma sequência foca em — ou "dá atenção a" — qualquer outro elemento: quanto maior o produto escalar, maior a similaridade e a pontuação de atenção entre dois elementos.
+
+4. Key: Como uma key de banco de dados usada para indexação e busca.
+
+Função: No mecanismo de atenção, cada item na sequência de entrada (por exemplo, cada palavra em uma frase) possui uma chave associada. Essas chaves são utilizadas para corresponder à consulta.
+
+5. Query: Semelhante a uma consulta de pesquisa em um banco de dados. Ela representa o item atual (por exemplo, uma palavra ou token em uma frase) no qual o modelo se concentra ou que tenta compreender.
+
+Função: A query é utilizada para examinar as outras partes da sequência de entrada, a fim de determinar quanta atenção deve ser dedicada a elas.
+
+6. Value: O value, neste contexto, é semelhante ao valor em um par chave-valor de um banco de dados.
+
+Função: Representa o conteúdo real ou a representação dos itens de entrada. Assim que o modelo determina quais chaves são mais relevantes para a query, ele recupera os valores correspondentes.
+
+7. Normalization: O principal objetivo da normalização é obter pesos de atenção que somem 1.
+
+Função: Essa normalização é uma convenção útil para a interpretação e para a manutenção da estabilidade do treinamento em um LLM.
+
+8. Weight parameters: 
+
+9. Attention weights:
+
+10. Context vectors: O objetivo deles é criar representações enriquecidas de cada elemento em uma sequência de entrada (como uma frase) incorporando informações de todos os outros elementos da sequência.
+
+Função: Essencial em LLMs, que precisam compreender a relação e a relevância das palavras entre si em uma frase.
+ 
