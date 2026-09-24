@@ -1,0 +1,156 @@
+SPRINT 3 - ANÁLISE DOS RESULTADOS
+==================================
+Como reproduzir: python Experiments/experiments_sprint3.py (a partir da raiz do repositório).
+Métricas completas em Experiments/results/sprint3/metricas.csv; resumo em texto em resumo_metricas.txt;
+figuras em Experiments/results/sprint3/figuras/.
+
+CONFIGURAÇÃO
+============
+- Dados: os mesmos da Sprint 2:
+  - The-verdict.txt 
+  - Tokenizer GPT-2 (tiktoken)
+  - Create_dataloader
+Token embeddings + positional embeddings.
+- Modelos: SelfAttention, CausalAttention e MultiHeadAttention (Codes/SPRINT_3/), com dropout = 0 e seed = 123.
+- Métricas (calculadas por linha da matriz de atenção):
+    entropia_norm: 0 = atenção concentrada em um único token; 1 = atenção uniforme (entropia dividida
+                   pelo log do nº de tokens visíveis, o que permite comparar atenção com e sem máscara).
+    peso_max:      maior peso da linha (média das linhas). Na atenção causal, a 1ª linha é ignorada
+                   (só enxerga a si mesma, peso = 1).
+- Validação das implementações: test_attention.py (8 testes) confirma formatos, linhas somando 1,
+  zeros acima da diagonal, ausência de vazamento do futuro, e que CausalAttention e MultiHeadAttention
+  produzem a mesma saída que torch.nn.functional.scaled_dot_product_attention(is_causal=True).
+
+LIMITAÇÃO CENTRAL: as camadas NÃO foram treinadas (pesos aleatórios) e usou-se uma única seed. Os
+resultados mostram o comportamento ESTRUTURAL do mecanismo (escala, máscara, heads, dimensões), e não
+relações linguísticas aprendidas. Diferenças pequenas entre configurações (na casa de 0,01 a 0,04) estão
+dentro do que a variação de inicialização pode produzir e não devem ser interpretadas como tendência.
+
+EXPERIMENTO 1 - Com vs. sem escala (1/raiz de d_k)
+==================================================
+Figuras: exp1_escala_dk8.png, exp1_escala_dk64.png, exp1_escala_dk256.png, exp1_escala_dk768.png, exp1_resumo_saturacao.png
+
+  d_k  peso_max sem escala  peso_max com escala  entropia_norm sem escala  entropia_norm com escala
+  ---  -------------------  -------------------  ------------------------  ------------------------
+  8    0,428                0,263                0,693                     0,903
+  64   0,795                0,264                0,217                     0,923
+  256  0,910                0,235                0,137                     0,941
+  768  0,901                0,253                0,123                     0,931
+
+Leitura: sem escala, conforme d_k cresce, o softmax satura: cada linha concentra cerca de 90% do peso em
+um único token (entropia_norm cai de 0,69 para cerca de 0,12). Com escala, o comportamento fica estável
+(cerca de 0,25 de peso máximo, entropia por volta de 0,9) independentemente de d_k. Isso é coerente com
+a justificativa do livro: produtos escalares grandes fazem o softmax se comportar como função degrau, e
+os gradientes tendem a zero. Não medimos gradientes neste experimento; observamos apenas a saturação do
+softmax, que é a causa apontada.
+
+EXPERIMENTO 2 - Máscara causal (Self-Attention vs. Causal Attention)
+====================================================================
+Figura: exp2_self_vs_causal.png
+
+  Modelo            Soma dos pesos acima da diagonal  Maior mudança nas saídas das posições 0-4 ao alterar os tokens >= 5
+  ----------------  --------------------------------  -------------------------------------------------------------------
+  Self-Attention    3,355                             5,880
+  Causal Attention  0,000                             0,000
+
+Leitura: na Self-Attention, cerca de 3,4 (de 8) unidades de peso vão para tokens futuros, e alterar os
+tokens finais muda as representações dos anteriores (vazamento). Na Causal Attention, o triângulo superior
+é exatamente zero, a 1ª linha é [1, 0, ..., 0] e as saídas das posições anteriores não dependem do futuro.
+É o requisito para prever o próximo token sem "ver a resposta".
+
+EXPERIMENTO 3 - Número de heads (d_out = 256 fixo)
+==================================================
+Figuras: exp3_heads_1.png, exp3_heads_2.png, exp3_heads_4.png, exp3_heads_8.png
+
+  heads  head_dim  parâmetros  entropia_norm  peso_max  diversidade entre heads
+  -----  --------  ----------  -------------  --------  -----------------------
+  1      256       262.400     0,919          0,374     0,000
+  2      128       262.400     0,904          0,420     0,067
+  4      64        262.400     0,925          0,389     0,055
+  8      32        262.400     0,920          0,394     0,059
+
+Leitura: (1) O número de parâmetros NÃO muda com o número de heads; apenas a forma como d_out é dividida.
+(2) Com mais de uma head, cada uma produz uma matriz de atenção diferente (diversidade > 0), o que é a base
+para a especialização das heads. Aqui, porém, essa diferença vem da inicialização aleatória, não de
+especialização aprendida. (3) entropia_norm e peso_max não mostram tendência clara com o número de heads.
+
+EXPERIMENTO 4 - Dimensão de cada head (4 heads; d_in = 256; varia d_out)
+========================================================================
+  d_out  head_dim  parâmetros  entropia_norm  peso_max
+  -----  --------  ----------  -------------  --------
+  32     8         25.632      0,900          0,419
+  64     16        53.312      0,886          0,419
+  128    32        114.816     0,910          0,410
+  256    64        262.400     0,925          0,389
+
+Leitura: o custo em parâmetros cresce com d_out (de cerca de 25 mil para cerca de 262 mil), enquanto o
+padrão de atenção muda pouco. Há uma leve tendência a atenção mais uniforme com head_dim maior, mas a
+variação é pequena e não conclusiva com uma única seed. O ganho de capacidade de um head_dim maior só
+poderia ser avaliado com treinamento.
+
+EXPERIMENTO 5 - Dimensão do embedding (4 heads; d_out = d_emb)
+==============================================================
+  d_emb  head_dim  parâmetros  entropia_norm  peso_max
+  -----  --------  ----------  -------------  --------
+  16     4         1.040       0,889          0,426
+  64     16        16.448      0,875          0,433
+  256    64        262.400     0,925          0,389
+  768    192       2.360.064   0,911          0,395
+
+Leitura: os parâmetros crescem aproximadamente com o QUADRADO da dimensão (cerca de 4 x d^2 + d), um custo
+relevante para os blocos da Sprint 4. Graças à escala 1/raiz de d_k, o comportamento da atenção permanece
+estável entre 16 e 768 dimensões (entropia_norm entre 0,88 e 0,93), ao contrário do observado sem escala
+no Experimento 1.
+
+EXPERIMENTO 6 - Self-Attention vs. Causal vs. Multi-Head (d = 64)
+=================================================================
+Figura: exp6_self_causal_multihead.png
+
+  Modelo                parâmetros  entropia_norm  peso_max
+  --------------------  ----------  -------------  --------
+  Self-Attention        12.288      0,923          0,264
+  Causal Attention      12.288      0,908          0,387
+  Multi-Head (4 heads)  16.448      0,875          0,433
+
+Leitura: Self e Causal têm o mesmo número de parâmetros (a máscara não adiciona parâmetros treináveis).
+A Multi-Head tem +4.160 parâmetros, correspondentes à projeção out_proj (64 x 64 + 64). CUIDADO: peso_max
+não é diretamente comparável entre atenção com e sem máscara, pois nas primeiras linhas da causal há poucos
+tokens visíveis (o maior peso é naturalmente alto). Por isso a entropia_norm é a métrica mais adequada para
+esse contraste. A figura mostra visualmente o triângulo superior zerado e a diferença entre a head 0 e a
+média das heads.
+
+EXPERIMENTO 7 - Diferentes sequências de entrada
+================================================
+Figuras: exp7_trecho0.png, exp7_trecho10.png, exp7_trecho50.png, exp7_contexto16.png, exp7_contexto32.png
+
+  Variação   T   entropia_norm  peso_max
+  ---------  --  -------------  --------
+  trecho 0   8   0,875          0,433
+  trecho 10  8   0,907          0,413
+  trecho 50  8   0,870          0,433
+  contexto   4   0,832          0,598
+  contexto   8   0,875          0,433
+  contexto   16  0,899          0,312
+  contexto   32  0,909          0,224
+
+Leitura: trocar o trecho de texto altera pouco as métricas (variação de até 0,04). Já o TAMANHO DO CONTEXTO
+tem efeito claro: com mais tokens visíveis, o peso é dividido entre mais posições e peso_max cai
+(0,60 para 0,22), enquanto a atenção se aproxima do uniforme (entropia_norm por volta de 0,9). Isso é
+esperado com pesos não treinados; um modelo treinado deveria concentrar atenção em tokens relevantes
+mesmo em contextos longos.
+
+CONCLUSÕES
+==========
+1. A escala 1/raiz de d_k é o que mantém o softmax estável quando a dimensão aumenta (Experimentos 1 e 5).
+2. A máscara causal impede completamente o vazamento do futuro e não custa parâmetros (Experimentos 2 e 6).
+3. Mais heads não aumentam parâmetros; dividem d_out em subespaços que geram padrões de atenção distintos
+   (Experimento 3).
+4. O custo em parâmetros cresce com o quadrado da dimensão (Experimentos 4 e 5) e um contexto maior dilui
+   os pesos (Experimento 7).
+
+LIMITAÇÕES E PRÓXIMOS PASSOS
+============================
+- Pesos não treinados e seed única: repetir os experimentos com várias seeds e reportar média e desvio.
+- Com o modelo treinado (sprints seguintes), repetir a visualização das matrizes para observar padrões
+  reais (por exemplo, heads que atendem ao token anterior).
+- Não foram medidos gradientes nem tempo de execução.
