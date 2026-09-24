@@ -1,0 +1,100 @@
+CAPÍTULO 3:
+
+1. Attention Mechanism: Mecanismos de atenção transformam elementos de entrada em representações vetoriais de contexto aprimoradas, que incorporam informações de todas as entradas.
+
+2. Self-attention mechanism: Calcula o vetor de contexto como a soma ponderada das entradas.
+
+3. Dot products: Uma maneira concisa de multiplicar dois vetores elemento a elemento e, em seguida, somar os produtos.
+
+Função: É uma medida de similaridade porque quantifica o grau de alinhamento entre dois vetores: um produto escalar mais elevado indica um maior grau de alinhamento ou similaridade entre os vetores. No contexto de mecanismos de autoatenção, o produto escalar determina em que medida cada elemento de uma sequência foca em — ou "dá atenção a" — qualquer outro elemento: quanto maior o produto escalar, maior a similaridade e a pontuação de atenção entre dois elementos.
+
+4. Key: Como uma key de banco de dados usada para indexação e busca.
+
+Função: No mecanismo de atenção, cada item na sequência de entrada (por exemplo, cada palavra em uma frase) possui uma chave associada. Essas chaves são utilizadas para corresponder à consulta.
+
+5. Query: Semelhante a uma consulta de pesquisa em um banco de dados. Ela representa o item atual (por exemplo, uma palavra ou token em uma frase) no qual o modelo se concentra ou que tenta compreender.
+
+Função: A query é utilizada para examinar as outras partes da sequência de entrada, a fim de determinar quanta atenção deve ser dedicada a elas.
+
+6. Value: O value, neste contexto, é semelhante ao valor em um par chave-valor de um banco de dados.
+
+Função: Representa o conteúdo real ou a representação dos itens de entrada. Assim que o modelo determina quais chaves são mais relevantes para a query, ele recupera os valores correspondentes.
+
+7. Normalization: O principal objetivo da normalização é obter pesos de atenção que somem 1.
+
+Função: Essa normalização é uma convenção útil para a interpretação e para a manutenção da estabilidade do treinamento em um LLM.
+
+8. Weight parameters: Coeficientes aprendidos pela rede durante o treinamento (por exemplo, os valores das matrizes Wq, Wk e Wv).
+
+Função: Armazenar o conhecimento do modelo. Diferem dos attention weights, que são calculados a cada entrada e dependem dos dados.
+
+9. Attention weights: Attention scores depois de normalizados pelo softmax: todos positivos e somando 1 em cada linha. Formam a "matriz de atenção" (tokens x tokens).
+
+Função: Definir a proporção com que cada token contribui para o context vector. É a matriz que visualizamos nos heatmaps.
+
+10. Context vectors: O objetivo deles é criar representações enriquecidas de cada elemento em uma sequência de entrada (como uma frase) incorporando informações de todos os outros elementos da sequência.
+
+Função: Essencial em LLMs, que precisam compreender a relação e a relevância das palavras entre si em uma frase.
+
+11. Attention scores: Valores brutos (sem normalizar) que medem a similaridade entre um token (query) e cada um dos outros (keys). Na versão simples, é o produto escalar entre os embeddings; na versão com pesos treináveis, entre queries e keys.
+
+Função: Indicar o quanto cada token deve atender aos demais, antes da normalização.
+	Exemplo de código: attn_scores = queries @ keys.T
+
+12. Softmax: Função que converte um vetor de valores em uma distribuição de probabilidade (valores positivos que somam 1). Dá mais destaque aos maiores valores e trata -inf como zero.
+
+Função: Normalizar os attention scores em attention weights.
+	Exemplo de código: torch.softmax(attn_scores, dim=-1)   (dim=-1 normaliza cada linha)
+
+13. Trainable weight matrices (Wq, Wk, Wv): Matrizes cujos valores são ajustados durante o treinamento para gerar queries, keys e values a partir dos embeddings de entrada.
+
+Função: Fazer o modelo aprender quais relações entre tokens importam. Na prática, implementadas com nn.Linear.
+	Exemplo de código: self.W_query = nn.Linear(d_in, d_out, bias=False)
+
+14. Scaled dot-product attention: Forma de self-attention usada nos Transformers e no GPT: attention weights = softmax(Q·K^T / sqrt(d_k)), em que d_k é a dimensão das keys.
+
+Função: A divisão por sqrt(d_k) evita que produtos escalares grandes (comuns quando a dimensão aumenta) saturem o softmax, deixando-o parecido com uma função degrau e com gradientes próximos de zero, o que atrasaria ou travaria o aprendizado. É o motivo do nome "scaled".
+	Exemplo de código: attn_scores / keys.shape[-1] ** 0.5
+
+15. Causal attention / Masked attention (atenção causal ou mascarada): Forma especializada de self-attention em que cada token só pode atender a si mesmo e aos tokens anteriores; os posteriores (futuro) são mascarados.
+
+Função: Em modelos tipo GPT, que geram texto da esquerda para a direita, impedir que o modelo "veja a resposta" (o próximo token) durante o treinamento e a geração.
+
+16. Causal mask (máscara causal): Matriz triangular que marca as posições acima da diagonal (tokens futuros). Nessas posições, os scores são substituídos por -inf antes do softmax, resultando em peso 0 após a normalização, e cada linha continua somando 1.
+
+Função: Implementar a causalidade de forma eficiente.
+	Exemplo de código: mask = torch.triu(torch.ones(T, T), diagonal=1)
+	                   attn_scores.masked_fill_(mask.bool(), -torch.inf)
+
+17. Dropout (em atenção): Técnica de regularização que zera aleatoriamente uma parte dos attention weights durante o treinamento (por exemplo, 10% a 20%), sendo desativado na inferência.
+
+Função: Reduzir overfitting, evitando que o modelo dependa demais de um conjunto específico de conexões de atenção.
+	Exemplo de código: self.dropout = nn.Dropout(0.1)
+
+18. register_buffer (PyTorch): Método que registra um tensor (como a máscara causal) no módulo sem tratá-lo como parâmetro treinável.
+
+Função: O buffer é movido automaticamente para o dispositivo do modelo (CPU/GPU) junto com ele, evitando erros de incompatibilidade de dispositivo.
+
+19. Multi-head attention (atenção multi-cabeça): Mecanismo que executa várias atenções (heads) em paralelo, cada uma com suas próprias projeções Q, K e V, e concatena os resultados.
+
+Função: Permitir que o modelo capture diferentes tipos de relação entre os tokens ao mesmo tempo. Após a concatenação, uma projeção linear (out_proj) combina as heads.
+
+20. Head (cabeça de atenção): Cada instância independente de atenção dentro da Multi-Head Attention.
+
+Função: Processar um subespaço da representação. No projeto, num_heads controla quantas existem.
+
+21. head_dim (dimensão da head): Tamanho do vetor de cada head: head_dim = d_out // num_heads.
+
+Função: Determinar a capacidade de cada head. O d_out deve ser divisível por num_heads. Aumentar num_heads (com d_out fixo) reduz o head_dim, mas não altera o número de parâmetros.
+
+22. d_in e d_out: Dimensão do vetor de entrada (embedding) e da saída da camada de atenção, respectivamente. Nos GPTs, costumam ser iguais.
+
+23. Batched matrix multiplication (multiplicação matricial em lote): Cálculo que processa todas as heads (e todos os itens do batch) de uma só vez com tensores de mais dimensões, em vez de laços.
+
+Função: Tornar a Multi-Head Attention eficiente. Envolve reorganizar (view + transpose) o tensor de (b, T, d_out) para (b, num_heads, T, head_dim).
+
+24. Context length (tamanho do contexto): Número máximo de tokens que o modelo processa de uma vez. Define o tamanho da matriz de atenção (context_length x context_length) e da máscara causal.
+
+25. Encoder-decoder RNN e Hidden state: Arquitetura anterior aos Transformers para tarefas como tradução: o encoder lê a entrada e a resume em um hidden state (memória) que o decoder usa para gerar a saída.
+
+Função (limitação): Como o decoder só acessa o hidden state final, textos longos perdem informação. Esse problema motivou o mecanismo de atenção (por exemplo, a atenção de Bahdanau, 2014).

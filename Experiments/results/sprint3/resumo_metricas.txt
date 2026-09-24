@@ -1,0 +1,67 @@
+1_escala
+--------
+d_k  entropia_norm  escala      peso_max
+---  -------------  ----------  --------
+8    0.6927         sem escala  0.4283  
+8    0.9027         com escala  0.2631  
+64   0.2169         sem escala  0.7954  
+64   0.9226         com escala  0.2635  
+256  0.137          sem escala  0.9097  
+256  0.9405         com escala  0.2347  
+768  0.123          sem escala  0.9005  
+768  0.931          com escala  0.2532  
+
+2_mascara
+---------
+modelo            soma_pesos_futuros  vazamento_max_dif
+----------------  ------------------  -----------------
+Self-Attention    3.355               5.880205         
+Causal Attention  0.0                 0.0              
+
+3_num_heads
+-----------
+diversidade_heads  entropia_norm  head_dim  heads  parametros  peso_max
+-----------------  -------------  --------  -----  ----------  --------
+0.0                0.9191         256       1      262400      0.3739  
+0.0665             0.9042         128       2      262400      0.42    
+0.0554             0.9251         64        4      262400      0.3885  
+0.0591             0.9202         32        8      262400      0.3936  
+
+4_head_dim
+----------
+d_out  entropia_norm  head_dim  parametros  peso_max
+-----  -------------  --------  ----------  --------
+32     0.9001         8         25632       0.4192  
+64     0.8855         16        53312       0.419   
+128    0.9102         32        114816      0.4101  
+256    0.9251         64        262400      0.3885  
+
+5_dim_embedding
+---------------
+d_emb  entropia_norm  head_dim  parametros  peso_max
+-----  -------------  --------  ----------  --------
+16     0.8892         4         1040        0.426   
+64     0.8747         16        16448       0.4331  
+256    0.9251         64        262400      0.3885  
+768    0.9107         192       2360064     0.3954  
+
+6_comparacao
+------------
+entropia_norm  modelo                parametros  peso_max
+-------------  --------------------  ----------  --------
+0.9226         Self-Attention        12288       0.2635  
+0.9083         Causal Attention      12288       0.387   
+0.8747         Multi-Head (4 heads)  16448       0.4331  
+
+7_sequencias
+------------
+T   amostra  entropia_norm  peso_max  tipo   
+--  -------  -------------  --------  -------
+8   0        0.8747         0.4331    trecho 
+8   10       0.9067         0.4132    trecho 
+8   50       0.8695         0.4329    trecho 
+4   0        0.8315         0.5983    tamanho
+8   0        0.8747         0.4331    tamanho
+16  0        0.8992         0.3122    tamanho
+32  0        0.9085         0.2239    tamanho
+
