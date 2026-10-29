@@ -1,0 +1,69 @@
+Código: Codes/SPRINT_4/generate.py. Como rodar: python Codes/SPRINT_4/generate.py (a partir da raiz).
+
+O modelo prevê apenas UM token por vez. Para gerar um texto, o token previsto é anexado à sequência e
+volta como entrada para a próxima previsão. Isso é a geração AUTOREGRESSIVA: cada saída vira parte do
+contexto da próxima.
+
+PROCEDIMENTO (função generate)
+==============================
+Entrada: idx (B, T) com os Token IDs do prompt. Repete max_new_tokens vezes:
+  1. Recorta o contexto: idx_cond = idx[:, -context_size:]. Se a sequência passar do context_length,
+     só os últimos tokens são usados (o modelo não aceita mais que isso).
+  2. Roda o modelo: logits (B, T, vocab_size).
+  3. Fica só com a última posição: logits[:, -1, :] -> (B, vocab_size). É a pontuação de cada token
+     do vocabulário para ser o PRÓXIMO.
+  4. (Opcional) Top-k: mantém os k maiores logits e troca os demais por -inf (probabilidade final 0).
+  5. Seleciona o próximo token:
+       temperature = 0  -> greedy: argmax dos logits (determinístico)
+       temperature > 0  -> probs = softmax(logits / temperature) e sorteio com torch.multinomial
+  6. Anexa o token escolhido: idx = cat(idx, idx_next). Volta ao passo 1.
+Antes do laço o modelo é colocado em model.eval() (desliga o dropout, senão a saída teria aleatoriedade
+extra) e o modo anterior é restaurado no final. Há parada opcional ao gerar o token de fim de texto
+(eos_id). Funções auxiliares: text_to_token_ids (texto -> tensor (1, T)) e token_ids_to_text.
+passo_a_passo() imprime um único passo (logits, soma das probabilidades, top-5 tokens).
+
+RELAÇÃO ENTRE LOGITS, PROBABILIDADES, SELEÇÃO E GERAÇÃO
+=======================================================
+- Logits: pontuações brutas, qualquer valor real, sem soma definida.
+- Probabilidades: softmax(logits) -> valores positivos que somam 1. O softmax é monotônico, então o
+  token de maior logit é também o de maior probabilidade: por isso o greedy pode usar argmax direto nos
+  logits. O softmax só é indispensável quando se quer SORTEAR.
+- Seleção do próximo token: argmax (sempre o mesmo resultado) ou sorteio ponderado pelas probabilidades
+  (resultados diferentes a cada execução, a menos que se fixe a seed).
+- Geração autoregressiva: o token selecionado é anexado ao contexto e o ciclo se repete, de modo que cada
+  escolha influencia todas as seguintes.
+
+ESTRATÉGIAS DE SELEÇÃO
+======================
+- Greedy (temperature = 0): sempre o mais provável. Determinístico; tende a texto repetitivo.
+- Temperatura: divide os logits antes do softmax. T < 1 deixa a distribuição mais "afiada" (mais
+  previsível); T = 1 mantém a original; T > 1 a deixa mais "achatada" (mais aleatória).
+- Top-k: restringe o sorteio aos k tokens mais prováveis, cortando a cauda de tokens improváveis.
+  top_k = 1 equivale ao greedy (testado em test_gpt.py::teste_topk1_equivale_ao_greedy).
+- Reprodutibilidade: com seed fixa (torch.manual_seed) a amostragem repete o mesmo resultado.
+
+OBSERVAÇÃO IMPORTANTE
+=====================
+O modelo desta sprint NÃO foi treinado (pesos aleatórios; o treino é o Capítulo 5). Por isso o texto
+gerado não faz sentido, e isso é esperado: o objetivo é mostrar o MECANISMO de geração. Os testes
+automáticos (test_gpt.py) verificam o comportamento: tamanho da saída, prompt preservado, greedy
+determinístico, top-k só sorteia entre os k melhores, geração além do context_length, parada por eos_id.
+
+EXEMPLO DE EXECUÇÃO (a preencher com a saída de: python Codes/SPRINT_4/generate.py)
+===================================================================================
+
+Prompt: 'Hello, I am' -> Token IDs [[15496, 11, 314, 716]] (shape (1, 4))
+
+Um passo de geração:
+  logits (todas as posições): (1, 4, 50257)
+  logits da última posição  : (1, 50257)
+  soma das probabilidades   : 1.0000
+  Top-5 tokens mais prováveis:
+    id  27018  p=0.00021  ' Feature'
+    id  40179  p=0.00015  '677'
+    id  42473  p=0.00014  'TRUMP'
+    id  14888  p=0.00014  ' participated'
+    id  22592  p=0.00014  'retch'
+
+Greedy (sem treino -> texto sem sentido, é esperado):
+  Hello, I am Featureiman Byeswickattribute argue
