@@ -1,0 +1,139 @@
+================================================
+Como reproduzir: python Experiments/experiments_sprint4.py (a partir da raiz do repositório).
+Métricas completas em Experiments/results/sprint4/metricas.csv; tabelas em texto em resumo_metricas.txt;
+figuras em Experiments/results/sprint4/figuras/.
+
+CONFIGURAÇÃO
+============
+- Modelo-base (menor que o GPT-2 small para os experimentos rodarem rápido): vocab 50257, emb_dim 256,
+  8 heads, 4 blocos, FeedForward 4x (1024), dropout 0, context_length 256, batch 4, T = 128, seed 123.
+  Em cada experimento muda-se UM parâmetro e o resto fica igual à base.
+- Entrada: Token IDs aleatórios (seed fixa). Para um modelo sem treino o conteúdo do texto não altera custo
+  nem estrutura.
+- Métricas de custo: parâmetros e MB (float32) e GFLOPs de um forward (só multiplicações de matrizes; ver
+  flops_forward) são DETERMINÍSTICOS. forward_ms = tempo do modelo completo; blocos_ms = tempo só dos
+  Transformer Blocks (isola o efeito da arquitetura da projeção final para 50257 tokens).
+- Validação do código: test_gpt.py (19 testes).
+
+LIMITAÇÕES
+==========
+- Modelos NÃO treinados: os experimentos mostram CUSTO e COMPORTAMENTO ESTRUTURAL, não qualidade do texto,
+  perplexidade nem aprendizado. Nada aqui permite dizer qual configuração "gera melhor".
+- Os TEMPOS dependem da máquina (CPU/GPU, threads) e oscilam: medidos com 1 thread, a mesma configuração-base
+  mediu entre 73 e 133 ms (blocos_ms) em experimentos diferentes. Compare tempos apenas DENTRO de um mesmo
+  experimento e use parâmetros e GFLOPs como referência firme. Diferenças de ~10% são ruído.
+- Uma única seed.
+
+EXPERIMENTO 1 - Número de Transformer Blocks (n_layers)
+=======================================================
+  n_layers  parâmetros   param_blocos  GFLOPs  forward_ms  blocos_ms
+  1         26.586.624      788.992    14,0       232         32
+  2         27.375.616    1.577.984    14,9       263         68
+  4         28.953.600    3.155.968    16,7       324        133
+  8         32.109.568    6.311.936    20,2       497        257
+  12        35.265.536    9.467.904    23,6       591        396
+Leitura: cada bloco adicional soma exatamente 788.992 parâmetros e ~0,8 GFLOP: o custo cresce linearmente
+com a profundidade (blocos_ms ~ 33 ms por bloco). O modelo completo cresce menos que proporcionalmente
+porque existe um custo fixo: com 1 bloco, ~94% dos GFLOPs (13,2 de 14,0) são da projeção final para 50257
+tokens. Em modelos pequenos com vocabulário grande, embeddings e cabeça dominam; em modelos grandes
+(GPT-2 small: 52% dos parâmetros nos blocos) os blocos passam a dominar. Mais blocos = mais capacidade de
+composição de representações, ao custo linear de parâmetros, memória e tempo (efeito na qualidade não
+medido, pois não há treino).
+
+EXPERIMENTO 2 - Número de heads (n_heads)
+=========================================
+  heads  head_dim  parâmetros   GFLOPs  forward_ms  blocos_ms
+  1      256       28.953.600   16,7       299        113
+  2      128       28.953.600   16,7       333        105
+  4       64       28.953.600   16,7       322        130
+  8       32       28.953.600   16,7       345        126
+  16      16       28.953.600   16,7       341        143
+Leitura: mudar o nº de heads NÃO muda parâmetros nem GFLOPs, porque head_dim = emb_dim / heads: o mesmo
+espaço de 256 dimensões é apenas dividido em mais subespaços menores. O tempo medido sobe levemente com
+mais heads (113 -> 143 ms nos blocos), tendência coerente com mais operações pequenas e reorganizações de
+tensor para o mesmo FLOPs, mas a variação é próxima do ruído e não deve ser tratada como conclusão firme.
+O trade-off das heads é de capacidade de representação (relações diferentes por head), não de custo, e isso
+só poderia ser avaliado com um modelo treinado. Cada head tem a matriz de atenção (T, T) própria, então a
+memória das matrizes de atenção cresce proporcionalmente ao nº de heads (ver Experimento 5).
+
+EXPERIMENTO 3 - Dimensão dos embeddings (emb_dim)
+==================================================
+  emb_dim  parâmetros   param_blocos  % emb+head  GFLOPs  forward_ms  blocos_ms
+  64        6.648.576      199.168      97,0%       3,6       158         24
+  128      13.690.368      791.552      94,2%       7,5       183         35
+  256      28.953.600    3.155.968      89,1%      16,7       293         75
+  512      64.198.656   12.603.392      80,4%      39,8       535        202
+Leitura: ao dobrar emb_dim, os parâmetros dos blocos quadruplicam (199.168 -> 791.552 -> 3.155.968 ->
+12.603.392; de 64 para 512, x63 ~ 8^2), pois as matrizes são d x d ou d x 4d (crescimento QUADRÁTICO em
+d). Já os parâmetros de embeddings e cabeça crescem linearmente com d (V x d), então sua fatia cai de 97%
+para 80%. GFLOPs foram de 3,6 a 39,8 (x11) e o tempo dos blocos de 24 a 202 ms (x8,4). emb_dim é o
+parâmetro de escala que mais pesa no custo.
+
+EXPERIMENTO 4 - Dimensão da FeedForward (ff_dim = múltiplo de emb_dim)
+=====================================================================
+  ff_mult  ff_dim  parâmetros   % FF nos blocos  GFLOPs  forward_ms  blocos_ms
+  1x        256    27.377.664       33,3%         15,1       252         49
+  2x        512    27.902.976       50,0%         15,6       265         60
+  4x       1024    28.953.600       66,6%         16,7       289         79
+  8x       2048    31.054.848       80,0%         18,8       308        116
+Leitura: a fatia da FeedForward nos blocos segue m/(m+2) (atenção = 4d^2 parâmetros; FF = 2·m·d^2), o que
+confere com os valores medidos. Com 4x (padrão do GPT-2) a FF tem 2/3 dos parâmetros do bloco. Passar de 4x
+para 8x aumenta 7,3% os parâmetros totais deste modelo e ~50% o tempo dos blocos. A FF é o componente mais
+barato de "aumentar capacidade" por parâmetro, mas também o que mais pesa no custo do bloco.
+
+EXPERIMENTO 5 - Tamanho da sequência (T)
+========================================
+  T    GFLOPs  forward_ms  blocos_ms  blocos_ms/token  matriz_atenção_MB (1 bloco)  % FLOPs dos blocos em scores
+  16    2,1        34          12         0,190              0,03                        1,0%
+  32    4,1        58          22         0,172              0,12                        2,0%
+  64    8,3       144          35         0,137              0,50                        4,0%
+  128  16,7       269          73         0,143              2,00                        7,7%
+  256  33,9       562         165         0,162              8,00                       14,3%
+  512  69,9      1338         565         0,276             32,00                       25,0%
+Leitura: as matrizes de atenção têm formato (batch, heads, T, T): ao multiplicar T por 32 (16 -> 512), a
+memória delas multiplica por 1024 (0,03 -> 32 MB por bloco, só para batch 4 e 8 heads), crescimento
+QUADRÁTICO. Os GFLOPs totais crescem ~linearmente (x33) porque a maior parte do custo (projeções e
+FeedForward) é linear em T; a parte quadrática (scores e soma ponderada) vai de 1% a 25% do custo dos blocos.
+Por isso o tempo por token fica estável até T=256 e quase dobra em T=512, quando a parte quadrática começa a
+pesar. Esse é o motivo de os modelos terem context_length limitado e de contexto longo ser caro.
+
+EXPERIMENTO 6 - Dropout (modo treino x inferência)
+==================================================
+  drop_rate  diferença média entre 2 passadas (eval)  (treino)
+  0,0        0,000000                                 0,0000
+  0,1        0,000000                                 0,2108
+  0,3        0,000000                                 0,3642
+  0,5        0,000000                                 0,4694
+Leitura: em model.eval() a saída é idêntica entre passadas (dropout desligado); em model.train() duas
+passadas sobre a MESMA entrada diferem, e a diferença cresce com a taxa de dropout. Dropout não muda nº de
+parâmetros nem GFLOPs; é um regularizador usado só no treino. Por isso generate() coloca o modelo em eval()
+antes de gerar. O efeito sobre overfitting não foi medido (sem treino).
+
+EXPERIMENTO 7 - Parâmetros de geração: temperatura e top-k
+==========================================================
+Logits do modelo sem treino: desvio-padrão 0,577 (distribuição quase uniforme sobre 50257 tokens).
+7a. Distribuição do próximo token (entropia normalizada por log V; V = 50257):
+  top_k   T=0,1   T=0,5   T=1,0   T=2,0   T=5,0   candidatos   massa original mantida
+  -       0,117   0,938   0,985   0,996   0,999   50257        100%
+  50      0,097   0,356   0,360   0,361   0,361   50           0,59%
+  10      0,068   0,207   0,211   0,212   0,213   10           0,15%
+  1       0,000   0,000   0,000   0,000   0,000   1            0,02%
+7b. Diversidade: 100 sorteios do 1º token novo, mesmo prompt, seeds diferentes:
+  greedy 1/100 | T=1,0: 100/100 | T=1,0 e top_k=50: 40/100 | T=1,0 e top_k=5: 5/100 | T=0,1: 13/100 | T=5,0: 100/100
+Leitura: (1) Temperatura: T baixa concentra a probabilidade (T=0,1 -> entropia 0,12 e token mais provável
+com 76%); T alta aproxima do uniforme (>0,99). (2) Top-k limita o nº de candidatos a k, e a diversidade fica
+limitada por k (top_k=5 nunca passa de 5 tokens distintos). (3) A queda da entropia com top-k=50 (0,985 ->
+0,360) é só o corte do suporte: log(50)/log(50257) = 0,361; normalizada pelo nº de candidatos, a entropia
+volta a ~0,997. (4) Cautela: como o modelo não foi treinado, a distribuição é quase uniforme e o top-k=50
+descarta 99,4% da massa original; em um modelo treinado a distribuição é concentrada e o top-k tipicamente
+corta só a cauda improvável. Este experimento demonstra o mecanismo, não a qualidade do texto.
+
+CONCLUSÕES
+==========
+- Custo por componente: parâmetros dos blocos crescem linearmente com n_layers e quadraticamente com
+  emb_dim; a FeedForward concentra 2/3 do bloco; o nº de heads não altera parâmetros nem FLOPs.
+- Custo de memória e tempo da atenção cresce quadraticamente com T; o resto do modelo, linearmente.
+- Em modelos pequenos com vocabulário grande, embeddings e cabeça de saída dominam parâmetros e FLOPs.
+- Dropout só afeta o treino; temperatura e top-k só afetam a geração (não alteram o custo do forward).
+- Não foi possível avaliar qualidade (sem treino, Capítulo 5). Próximo passo natural: treinar e repetir os
+  experimentos de heads, profundidade e geração medindo loss/perplexidade.
