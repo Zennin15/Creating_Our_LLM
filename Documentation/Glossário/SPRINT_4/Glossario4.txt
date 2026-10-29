@@ -1,0 +1,77 @@
+CAPÍTULO 4
+
+1. GPT: Generative Pretrained Transformer.
+
+2. Transformer: Arquitetura de rede neural profunda, utilizada no modelo GPT.
+
+Função: Modelar dependências contextuais e transformar representações textuais em distribuições de probabilidade precisas. Ele prevê o próximo token de uma sequência de entrada, permite identificar contextos em uma sequência e a relação entre os tokens.
+
+Relação: O transformer é a infraestrutura ou motor sobre o qual as LLMs são construídas. É o que dá vida ao modelo.
+
+3. Transformer Block: É uma unidade fundamental que, quando empilhada (repetida) dezenas ou centenas de vezes, forma a estrutura completa de uma LLM. Ele é formado por quatro camadas: LayerNorm, Masked Multi-Head Self-Attention, Conexões Residuais e Feed-Forward.
+
+Função: Refinar iterativamente os embeddings, aplicando transformações relacionais e não-lineares sucessivas.
+
+Relação: Composição hierárquica e modularidade em escala.
+
+4. Layer Normalization: Técnica estatística aplicada às ativações de uma rede neural para padronizar sua média e variância.
+
+Função: Garantir a estabilidade numérica e controlar a propagação de escala das ativações através de várias camadas. Ele reinicializa estatisticamente a distribuição a cada camada, impedindo que os valores explodam ou sumam.
+
+Relação: 
+
+5. Conexões Residuais: 
+
+Função: 
+
+Relação: 
+
+6. Feed Forward Network: 
+
+Função: 
+
+Relação: 
+
+7. GELU: 
+
+Função: 
+
+Relação:
+
+8. Dropout: 
+
+Função: 
+
+Relação:  
+
+9. Logits: 
+
+Função: 
+
+Relação: 
+
+10. Language Model Head: 
+
+Função: 
+
+Relação: 
+
+11. Inferência: 
+
+Função: 
+
+Relação: 
+
+12. Geração Autorregressiva: 
+
+Função: 
+
+Relação: 
+
+13. Gradientes: Vetores que aponta para a direção de maior crescimento de uma função.
+
+Função: Guiar o ajuste de pesos durante o aprendizado do modelo.
+
+Relação: Multiplicar gradientes ao longos de várias camadas da rede neural pode fazer com que sumam ou explodam (fiquem tão grandes que corrompem o modelo). Isso exige o uso de Layer Normalization.
+
+14. Loss Function: Métrica que calcula o tamanho do erro cometido pela LLM ao tentar adivinhar qual o próximo token da sequência.
