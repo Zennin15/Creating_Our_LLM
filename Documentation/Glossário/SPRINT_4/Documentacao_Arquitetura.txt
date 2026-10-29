@@ -1,0 +1,92 @@
+Código: Codes/SPRINT_4/ (transformer_block.py, gpt_model.py).
+Notação: B = batch, T = nº de tokens da sequência, d = emb_dim, h = n_heads, V = vocab_size.
+Valores de exemplo = GPT-2 small: d = 768, h = 12 (head_dim = 64), FeedForward = 3072, V = 50257,
+context_length = 1024, 12 blocos.
+
+TRANSFORMER BLOCK
+================================
+
+Estrutura (pre-LayerNorm, como no GPT-2)
+----------------------------------------
+    x ─► LayerNorm1 ─► Multi-Head Attention ─► Dropout ─► (+) ─► x'
+    └─────────────── conexão residual ──────────────────────┘
+    x' ─► LayerNorm2 ─► FeedForward ─► Dropout ─► (+) ─► saída
+    └─────────────── conexão residual ──────────────────────┘
+
+O bloco NÃO altera o formato: (B, T, d) entra e (B, T, d) sai. Por isso blocos podem ser empilhados.
+
+Componentes e função de cada um
+-------------------------------
+- LayerNorm (layer_norm.py): normaliza o vetor de cada token (última dimensão) para média 0 e variância 1
+  e aplica scale e shift treináveis. Mantém a escala das ativações estável ao longo das camadas, o que
+  estabiliza o treino. Ao contrário da BatchNorm, não depende do tamanho do batch.
+- Multi-Head Attention (Sprint 3, multi_head_attention.py): mistura informação ENTRE tokens, respeitando
+  a máscara causal (cada token só vê o passado e ele mesmo).
+- FeedForward (feed_forward.py): Linear(d -> 4d) -> GELU -> Linear(4d -> d), aplicada a cada token
+  separadamente. Dá capacidade de transformação não linear a cada posição.
+- GELU (gelu.py): ativação suave (parecida com a ReLU, mas deixa passar uma fração pequena de valores
+  negativos), o que dá gradientes mais bem comportados perto de zero.
+- Conexão residual: soma a entrada da sub-camada à sua saída. Cria um caminho direto para o gradiente
+  atravessar muitos blocos sem desaparecer e faz cada sub-camada aprender apenas um "ajuste" sobre o que
+  já existe. Teste: com out_proj e a última camada da FeedForward zeradas, o bloco devolve exatamente a
+  própria entrada (test_gpt.py::teste_conexao_residual).
+- Dropout (drop_shortcut): zera aleatoriamente uma fração das ativações durante o treino, reduzindo
+  overfitting. É desligado no modo de inferência (model.eval()).
+
+Dimensões dos tensores ao longo do bloco
+----------------------------------------
+    Entrada x                                     (B, T, 768)
+    LayerNorm1                                    (B, T, 768)
+    Q = W_query(x), K = W_key(x), V = W_value(x)  (B, T, 768) cada
+    view + transpose em heads                     (B, 12, T, 64)
+    scores = Q @ K^T (+ máscara causal, / raiz de 64)   (B, 12, T, T)
+    softmax -> pesos de atenção                   (B, 12, T, T)    cada linha soma 1
+    pesos @ V                                     (B, 12, T, 64)
+    junta as heads (transpose + view)             (B, T, 768)
+    out_proj (Linear 768 -> 768)                  (B, T, 768)
+    Dropout + soma com a entrada (residual 1)     (B, T, 768)
+    LayerNorm2                                    (B, T, 768)
+    Linear 768 -> 3072                            (B, T, 3072)
+    GELU                                          (B, T, 3072)
+    Linear 3072 -> 768                            (B, T, 768)
+    Dropout + soma (residual 2)                   (B, T, 768)     = saída do bloco
+
+Parâmetros de UM bloco (d = 768): 7.085.568
+    Atenção:      2.360.064  (Q, K, V sem bias: 3 x 768 x 768 = 1.769.472; out_proj: 590.592)
+    FeedForward:  4.722.432  (768x3072 + 3072  +  3072x768 + 768)   -> ~2/3 do bloco
+    LayerNorms:       3.072  (2 LayerNorms x 2 vetores x 768)
+
+MODELO GPT
+=========================
+
+Organização (gpt_model.py, classe GPTModel)
+-------------------------------------------
+    Token IDs                                   (B, T)
+      │ tok_emb   nn.Embedding(V, d)            (Sprint 2)
+      ▼
+    Token embeddings                            (B, T, 768)
+      + pos_emb   nn.Embedding(context_length, d)  (Sprint 2) -> (T, 768), somado por broadcast
+      │ drop_emb  (Dropout)
+      ▼
+    trf_blocks    12 x TransformerBlock         (B, T, 768)
+      ▼
+    final_norm    LayerNorm                     (B, T, 768)
+      │ out_head  Linear(768 -> 50257, sem bias)  = Language Model Head
+      ▼
+    Logits                                      (B, T, 50257)
+
+- Os logits são uma pontuação bruta para cada token do vocabulário em CADA posição. Para prever o
+  próximo token usa-se o vetor de logits da ÚLTIMA posição.
+- O modelo recusa sequências com T > context_length (a tabela de posições só tem context_length entradas).
+- A máscara causal (Sprint 3) garante que o logit da posição i depende apenas dos tokens 0..i. Teste:
+  alterar tokens a partir da posição 5 não muda os logits das posições anteriores
+  (test_gpt.py::teste_gpt_sem_vazamento_do_futuro).
+
+Parâmetros do GPT-2 small implementado (config GPT_CONFIG_124M): 163.009.536 no total
+    tok_emb       38.597.376  (23,7%)
+    pos_emb          786.432  ( 0,5%)
+    12 blocos     85.026.816  (52,2%)  = atenção 28.320.768 + FeedForward 56.669.184 + LayerNorms 36.864
+    final_norm         1.536
+    out_head      38.597.376  (23,7%)
+Sem pesos próprios no out_head (weight tying, como no GPT-2 original): 124.412.160 -> o "124M".
+Tamanho em float32: ~622 MB. Valores conferidos com o livro e por teste automático.
