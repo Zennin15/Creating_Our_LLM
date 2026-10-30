@@ -1,0 +1,77 @@
+CAPÍTULO 4
+
+1. GPT: Generative Pretrained Transformer.
+
+2. Transformer: Arquitetura de rede neural profunda, utilizada no modelo GPT.
+
+Função: Modelar dependências contextuais e transformar representações textuais em distribuições de probabilidade precisas. Ele prevê o próximo token de uma sequência de entrada, permite identificar contextos em uma sequência e a relação entre os tokens.
+
+Relação: O transformer é a infraestrutura ou motor sobre o qual as LLMs são construídas. É o que dá vida ao modelo.
+
+3. Transformer Block: É uma unidade fundamental que, quando empilhada (repetida) dezenas ou centenas de vezes, forma a estrutura completa de uma LLM. Ele é formado por quatro camadas: LayerNorm, Masked Multi-Head Self-Attention, Conexões Residuais e Feed-Forward.
+
+Função: Refinar iterativamente os embeddings, aplicando transformações relacionais e não-lineares sucessivas.
+
+Relação: Composição hierárquica e modularidade em escala.
+
+4. Layer Normalization: Técnica estatística aplicada às ativações de uma rede neural para padronizar sua média e variância.
+
+Função: Garantir a estabilidade numérica e controlar a propagação de escala das ativações através de várias camadas. Ele reinicializa estatisticamente a distribuição a cada camada, impedindo que os valores (gradientes) explodam ou sumam.
+
+Relação: Mecanismos regulador que viabiliza a arquitetura em larga escala. Sem ele, o treinamento de modelos com bilhões de parâmetros e centenas de camadas seria matematicamente inviável devido à degradação dos tensores.
+
+5. Conexões Residuais: São atalhos arquiteturais que permitem que a entrada de uma subcamada seja somada diretamente à sua saída, ignorando temporariamente o processamento interno.
+
+Função: A função primária das conexões residuais em uma LLM é garantir a estabilidade da retro propagação e facilitar o aprendizado incremental.
+
+Relação: Em cada bloco Transformer padrão, existem tipicamente duas grandes conexões residuais: uma envolvendo o módulo de Auto atenção Multicabeça e outra envolvendo a rede Feed-Forward (FFN). Elas garantem que a saída de cada submódulo seja integrada de forma aditiva ao fluxo principal.
+
+6. Feed Forward Network: É uma subcamada densa que sucede o mecanismo de autoatenção em cada transformer block.
+
+Função: Introduzir não-linearidade complexa e atuar como uma memória associativa de longo prazo. Funcionam como um banco de dados chave-valor. É nelas que grande parte dos fatos, regras gramaticais, conceitos históricos e conhecimentos gerais adquitidos durante o pré-treinamento ficam gravados nos pesos sinápticos (W1 e W2).
+
+Relação: A saída da FFN é somada à sua entrada através de uma conexão residual (skip connection) seguida de LayerNorm, garantindo que o conhecimento acumulado pela rede seja integrado de forma aditiva e estável ao longo do fluxo informacional.
+
+7. GELU (Gaussian Error Linear Unit: Função de ativação não-linear, que se tornou um padrão no design de modelos Transformer clássicos, como o GPT-2.
+
+Função: Valores altamente positivos passam quase inalterados (multiplicados por um fator próximo de 1), enquanto valores negativos grandes são suprimidos em direção a zero. Valores próximos de zero sofrem uma modulação suave baseada na sua posição na curva gaussiana. Permite que o modelo decida se um dado recurso latente deve ser amplificado ou abafado com base em quão extremo e estatisticamente provável ele é em relação às ativações vizinhas.
+
+Relação: A GELU opera estritamente no interior da subcamada Feed-Forward (FFN), sendo posicionada logo após a primeira expansão linear de matrizes. Ela atua como a "válvula não-linear" que transforma dados lineares brutos em conceitos semânticos ricos.
+
+8. Dropout: Técnica de regularização estocástica que desliga aleatoriamente uma fração dos neurônios ou ativações durante o treinamento para prevenir o overfitting.
+
+Função: Quebrar a co-adaptação entre neurônios e forçar a rede a aprender representações mais robustas e generalizáveis.
+
+Relação: Atua como um regulador da alta capacidade dos blocos Transformer, embora em LLMs de escala massiva contemporâneas seja frequentemente reduzido a zero devido ao volume astronômico de dados de treinamento. 
+
+9. Logits: Escores brutos e não normalizados gerados pela camada linear final de uma rede neural antes da aplicação de funções como o Softmax.
+
+Função: Atuar como a ponte quantitativa entre o espaço vetorial interno do Transformer e o vocabulário discreto de texto, indicando a preferência bruta para o próximo token.
+
+Relação: Representam o produto final de toda a computação dos blocos Transformer e servem de base para o cálculo da função de perda (Loss Function) durante o treinamento.
+
+10. Language Model Head: Camada linear final da arquitetura do Transformer que mapeia a dimensão oculta do vetor de contexto para a dimensão total do vocabulário do modelo.
+
+Função: Transformar os vetores de características latentes do último bloco Transformer em logits brutos correspondentes a cada token do vocabulário.
+
+Relação: É o ponto de contato terminal onde a representação abstrata interna do modelo se traduz em previsões textuais concretas.
+
+11. Inferência: Fase de uso prático ou execução de um modelo de linguagem já treinado, onde ele processa novos textos de entrada para gerar respostas ou continuações.
+
+Função: Aplicar os pesos sinápticos aprendidos para deduzir e produzir novas sequências de texto baseadas em um prompt.
+
+Relação: Diferente da fase de treinamento, a inferência utiliza métodos de amostragem sobre os logits gerados pela arquitetura Transformer para determinar a saída textual final.
+
+12. Geração Autorregressiva: Processo sequencial no qual o modelo gera um token de cada vez, alimentando o token recém-gerado de volta como entrada para a predição do próximo passo.
+
+Função: Permitir a criação fluida de frases, parágrafos e textos longos de forma encadeada e coerente.
+
+Relação: É o paradigma fundamental de funcionamento das LLMs baseadas em decodificadores (decoder-only), onde cada ciclo de computação do Transformer adiciona um novo elemento ao contexto acumulado.
+
+13. Gradientes: Vetores que apontam para a direção de maior crescimento de uma função.
+
+Função: Guiar o ajuste de pesos durante o aprendizado do modelo.
+
+Relação: Multiplicar gradientes ao longos de várias camadas da rede neural pode fazer com que sumam ou explodam (fiquem tão grandes que corrompem o modelo). Isso exige o uso de Layer Normalization.
+
+14. Loss Function: Métrica que calcula o tamanho do erro cometido pela LLM ao tentar adivinhar qual o próximo token da sequência.
