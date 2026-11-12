@@ -1,0 +1,188 @@
+experimento,configuracao,metrica,valor
+exp0,estado_inicial,train_loss,10.963181866539848
+exp0,estado_inicial,val_loss,10.972263813018799
+exp0,estado_inicial,train_ppl,57709.77601839306
+exp0,estado_inicial,val_ppl,58236.28033862136
+exp0,estado_inicial,log_vocab,10.82490511970208
+exp0,estado_inicial,vocab,50257
+exp0,estado_inicial,tokens_texto,5145
+exp0,estado_inicial,lotes_treino,18
+exp0,estado_inicial,lotes_val,2
+exp0,estado_inicial,parametros,13278208
+exp1,epoca_0,train_loss,10.963181866539848
+exp1,epoca_0,val_loss,10.972263813018799
+exp1,epoca_0,gap,0.009081946478950442
+exp1,epoca_0,train_ppl,57709.77601839306
+exp1,epoca_0,val_ppl,58236.28033862136
+exp1,epoca_1,train_loss,9.865844832526314
+exp1,epoca_1,val_loss,10.045461654663086
+exp1,epoca_1,gap,0.17961682213677221
+exp1,epoca_1,train_ppl,19261.13920826518
+exp1,epoca_1,val_ppl,23050.93599279606
+exp1,epoca_2,train_loss,7.823060300615099
+exp1,epoca_2,val_loss,8.118305206298828
+exp1,epoca_2,gap,0.2952449056837292
+exp1,epoca_2,train_ppl,2497.5369385289064
+exp1,epoca_2,val_ppl,3355.329332539034
+exp1,epoca_5,train_loss,6.02781343460083
+exp1,epoca_5,val_loss,6.635838270187378
+exp1,epoca_5,gap,0.6080248355865479
+exp1,epoca_5,train_ppl,414.80703433986076
+exp1,epoca_5,val_ppl,761.9174909169068
+exp1,epoca_10,train_loss,5.223199764887492
+exp1,epoca_10,val_loss,6.424453973770142
+exp1,epoca_10,gap,1.2012542088826494
+exp1,epoca_10,train_ppl,185.52687771383316
+exp1,epoca_10,val_ppl,616.743967203452
+exp1,epoca_15,train_loss,4.036270764138964
+exp1,epoca_15,val_loss,6.279632329940796
+exp1,epoca_15,gap,2.243361565801832
+exp1,epoca_15,train_ppl,56.614818626945706
+exp1,epoca_15,val_ppl,533.5924417906241
+exp1,total,melhor_epoca_val,15
+exp1,total,menor_val_loss,6.279632329940796
+exp1,total,segundos,92.76976330000616
+exp1,total,ms_por_passo,343.59171592594873
+exp1,total,tokens_por_s,745.0703498776245
+exp2,lr_0.0001,train_loss,9.190303325653076
+exp2,lr_0.0001,val_loss,9.427613258361816
+exp2,lr_0.0001,menor_val_loss,9.427613258361816
+exp2,lr_0.0001,segundos,35.40955529999337
+exp2,lr_0.0001,ms_por_passo,393.43950333325967
+exp2,lr_0.0005,train_loss,6.02781343460083
+exp2,lr_0.0005,val_loss,6.635838270187378
+exp2,lr_0.0005,menor_val_loss,6.635838270187378
+exp2,lr_0.0005,segundos,29.632095400011167
+exp2,lr_0.0005,ms_por_passo,329.2455044445685
+exp2,lr_0.002,train_loss,4.636515034569634
+exp2,lr_0.002,val_loss,6.310909748077393
+exp2,lr_0.002,menor_val_loss,6.310909748077393
+exp2,lr_0.002,segundos,35.42200789999333
+exp2,lr_0.002,ms_por_passo,393.5778655554815
+exp3,lote_2,passos,90
+exp3,lote_2,train_loss,6.02781343460083
+exp3,lote_2,val_loss,6.635838270187378
+exp3,lote_2,segundos,29.632095400011167
+exp3,lote_2,ms_por_passo,329.2455044445685
+exp3,lote_2,tokens_por_s,777.5352937069484
+exp3,lote_4,passos,45
+exp3,lote_4,train_loss,6.838051266140408
+exp3,lote_4,val_loss,7.26355504989624
+exp3,lote_4,segundos,31.63259249999828
+exp3,lote_4,ms_por_passo,702.9464999999618
+exp3,lote_4,tokens_por_s,728.362684784728
+exp4,dropout_0,train_loss,5.223199764887492
+exp4,dropout_0,val_loss,6.424453973770142
+exp4,dropout_0,gap,1.2012542088826494
+exp4,dropout_0,menor_val_loss,6.424453973770142
+exp4,dropout_0,melhor_epoca_val,10
+exp4,dropout_0.3,train_loss,5.666332377327813
+exp4,dropout_0.3,val_loss,6.595319747924805
+exp4,dropout_0.3,gap,0.9289873705969915
+exp4,dropout_0.3,menor_val_loss,6.595319747924805
+exp4,dropout_0.3,melhor_epoca_val,10
+exp6,sem treino|greedy,distinct_1,1.0
+exp6,sem treino|greedy,distinct_2,1.0
+exp6,sem treino|greedy,repeticao_3gram,0.0
+exp6,sem treino|greedy,nll_no_modelo,8.591158866882324
+exp6,sem treino|greedy,textos_distintos,0.3333333333333333
+exp6,sem treino|amostragem T=1.0,distinct_1,1.0
+exp6,sem treino|amostragem T=1.0,distinct_2,1.0
+exp6,sem treino|amostragem T=1.0,repeticao_3gram,0.0
+exp6,sem treino|amostragem T=1.0,nll_no_modelo,10.721028010050455
+exp6,sem treino|amostragem T=1.0,textos_distintos,1.0
+exp6,sem treino|T=0.7,distinct_1,1.0
+exp6,sem treino|T=0.7,distinct_2,1.0
+exp6,sem treino|T=0.7,repeticao_3gram,0.0
+exp6,sem treino|T=0.7,nll_no_modelo,10.493613878885904
+exp6,sem treino|T=0.7,textos_distintos,1.0
+exp6,sem treino|T=1.5,distinct_1,1.0
+exp6,sem treino|T=1.5,distinct_2,1.0
+exp6,sem treino|T=1.5,repeticao_3gram,0.0
+exp6,sem treino|T=1.5,nll_no_modelo,10.810497283935547
+exp6,sem treino|T=1.5,textos_distintos,1.0
+exp6,"sem treino|top-k=5, T=1.0",distinct_1,1.0
+exp6,"sem treino|top-k=5, T=1.0",distinct_2,1.0
+exp6,"sem treino|top-k=5, T=1.0",repeticao_3gram,0.0
+exp6,"sem treino|top-k=5, T=1.0",nll_no_modelo,8.704940478006998
+exp6,"sem treino|top-k=5, T=1.0",textos_distintos,1.0
+exp6,"sem treino|top-k=50, T=1.0",distinct_1,1.0
+exp6,"sem treino|top-k=50, T=1.0",distinct_2,1.0
+exp6,"sem treino|top-k=50, T=1.0",repeticao_3gram,0.0
+exp6,"sem treino|top-k=50, T=1.0",nll_no_modelo,9.072664896647135
+exp6,"sem treino|top-k=50, T=1.0",textos_distintos,1.0
+exp6,"sem treino|top-k=5, T=0.7",distinct_1,1.0
+exp6,"sem treino|top-k=5, T=0.7",distinct_2,1.0
+exp6,"sem treino|top-k=5, T=0.7",repeticao_3gram,0.0
+exp6,"sem treino|top-k=5, T=0.7",nll_no_modelo,8.718398412068685
+exp6,"sem treino|top-k=5, T=0.7",textos_distintos,1.0
+exp6,treinado (5 épocas)|greedy,distinct_1,0.10000000000000002
+exp6,treinado (5 épocas)|greedy,distinct_2,0.15384615384615385
+exp6,treinado (5 épocas)|greedy,repeticao_3gram,0.7894736842105262
+exp6,treinado (5 épocas)|greedy,nll_no_modelo,2.623492479324341
+exp6,treinado (5 épocas)|greedy,textos_distintos,0.3333333333333333
+exp6,treinado (5 épocas)|amostragem T=1.0,distinct_1,0.8583333333333334
+exp6,treinado (5 épocas)|amostragem T=1.0,distinct_2,1.0
+exp6,treinado (5 épocas)|amostragem T=1.0,repeticao_3gram,0.0
+exp6,treinado (5 épocas)|amostragem T=1.0,nll_no_modelo,6.774619261423747
+exp6,treinado (5 épocas)|amostragem T=1.0,textos_distintos,1.0
+exp6,treinado (5 épocas)|T=0.7,distinct_1,0.5916666666666667
+exp6,treinado (5 épocas)|T=0.7,distinct_2,0.9487179487179488
+exp6,treinado (5 épocas)|T=0.7,repeticao_3gram,0.0
+exp6,treinado (5 épocas)|T=0.7,nll_no_modelo,4.590863068898519
+exp6,treinado (5 épocas)|T=0.7,textos_distintos,1.0
+exp6,treinado (5 épocas)|T=1.5,distinct_1,1.0
+exp6,treinado (5 épocas)|T=1.5,distinct_2,1.0
+exp6,treinado (5 épocas)|T=1.5,repeticao_3gram,0.0
+exp6,treinado (5 épocas)|T=1.5,nll_no_modelo,10.223570187886557
+exp6,treinado (5 épocas)|T=1.5,textos_distintos,1.0
+exp6,"treinado (5 épocas)|top-k=5, T=1.0",distinct_1,0.15
+exp6,"treinado (5 épocas)|top-k=5, T=1.0",distinct_2,0.4871794871794872
+exp6,"treinado (5 épocas)|top-k=5, T=1.0",repeticao_3gram,0.17543859649122806
+exp6,"treinado (5 épocas)|top-k=5, T=1.0",nll_no_modelo,3.3213206926981607
+exp6,"treinado (5 épocas)|top-k=5, T=1.0",textos_distintos,1.0
+exp6,"treinado (5 épocas)|top-k=50, T=1.0",distinct_1,0.5666666666666668
+exp6,"treinado (5 épocas)|top-k=50, T=1.0",distinct_2,0.9743589743589743
+exp6,"treinado (5 épocas)|top-k=50, T=1.0",repeticao_3gram,0.0
+exp6,"treinado (5 épocas)|top-k=50, T=1.0",nll_no_modelo,4.29728905359904
+exp6,"treinado (5 épocas)|top-k=50, T=1.0",textos_distintos,1.0
+exp6,"treinado (5 épocas)|top-k=5, T=0.7",distinct_1,0.15
+exp6,"treinado (5 épocas)|top-k=5, T=0.7",distinct_2,0.47863247863247865
+exp6,"treinado (5 épocas)|top-k=5, T=0.7",repeticao_3gram,0.17543859649122806
+exp6,"treinado (5 épocas)|top-k=5, T=0.7",nll_no_modelo,3.2798829078674316
+exp6,"treinado (5 épocas)|top-k=5, T=0.7",textos_distintos,1.0
+exp6,sobreajustado (15 épocas)|greedy,distinct_1,0.425
+exp6,sobreajustado (15 épocas)|greedy,distinct_2,0.7692307692307693
+exp6,sobreajustado (15 épocas)|greedy,repeticao_3gram,0.02631578947368421
+exp6,sobreajustado (15 épocas)|greedy,nll_no_modelo,3.0071349143981934
+exp6,sobreajustado (15 épocas)|greedy,textos_distintos,0.3333333333333333
+exp6,sobreajustado (15 épocas)|amostragem T=1.0,distinct_1,0.9333333333333332
+exp6,sobreajustado (15 épocas)|amostragem T=1.0,distinct_2,1.0
+exp6,sobreajustado (15 épocas)|amostragem T=1.0,repeticao_3gram,0.0
+exp6,sobreajustado (15 épocas)|amostragem T=1.0,nll_no_modelo,6.551616509755452
+exp6,sobreajustado (15 épocas)|amostragem T=1.0,textos_distintos,1.0
+exp6,sobreajustado (15 épocas)|T=0.7,distinct_1,0.6333333333333333
+exp6,sobreajustado (15 épocas)|T=0.7,distinct_2,0.8717948717948718
+exp6,sobreajustado (15 épocas)|T=0.7,repeticao_3gram,0.043859649122807015
+exp6,sobreajustado (15 épocas)|T=0.7,nll_no_modelo,4.013773838678996
+exp6,sobreajustado (15 épocas)|T=0.7,textos_distintos,1.0
+exp6,sobreajustado (15 épocas)|T=1.5,distinct_1,0.9916666666666667
+exp6,sobreajustado (15 épocas)|T=1.5,distinct_2,1.0
+exp6,sobreajustado (15 épocas)|T=1.5,repeticao_3gram,0.0
+exp6,sobreajustado (15 épocas)|T=1.5,nll_no_modelo,10.15157159169515
+exp6,sobreajustado (15 épocas)|T=1.5,textos_distintos,1.0
+exp6,"sobreajustado (15 épocas)|top-k=5, T=1.0",distinct_1,0.5583333333333332
+exp6,"sobreajustado (15 épocas)|top-k=5, T=1.0",distinct_2,0.9145299145299145
+exp6,"sobreajustado (15 épocas)|top-k=5, T=1.0",repeticao_3gram,0.0
+exp6,"sobreajustado (15 épocas)|top-k=5, T=1.0",nll_no_modelo,3.0526575247446694
+exp6,"sobreajustado (15 épocas)|top-k=5, T=1.0",textos_distintos,1.0
+exp6,"sobreajustado (15 épocas)|top-k=50, T=1.0",distinct_1,0.6749999999999999
+exp6,"sobreajustado (15 épocas)|top-k=50, T=1.0",distinct_2,0.9572649572649573
+exp6,"sobreajustado (15 épocas)|top-k=50, T=1.0",repeticao_3gram,0.0
+exp6,"sobreajustado (15 épocas)|top-k=50, T=1.0",nll_no_modelo,4.227217833201091
+exp6,"sobreajustado (15 épocas)|top-k=50, T=1.0",textos_distintos,1.0
+exp6,"sobreajustado (15 épocas)|top-k=5, T=0.7",distinct_1,0.5083333333333333
+exp6,"sobreajustado (15 épocas)|top-k=5, T=0.7",distinct_2,0.8376068376068376
+exp6,"sobreajustado (15 épocas)|top-k=5, T=0.7",repeticao_3gram,0.02631578947368421
+exp6,"sobreajustado (15 épocas)|top-k=5, T=0.7",nll_no_modelo,3.2949742476145425
+exp6,"sobreajustado (15 épocas)|top-k=5, T=0.7",textos_distintos,1.0

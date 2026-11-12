@@ -1,0 +1,34 @@
+{
+  "model_config": {
+    "vocab_size": 50257,
+    "context_length": 256,
+    "emb_dim": 256,
+    "n_heads": 8,
+    "n_layers": 4,
+    "drop_rate": 0.0,
+    "qkv_bias": false
+  },
+  "train_config": {
+    "epochs": 3,
+    "batch_size": 2,
+    "lr": 0.0005,
+    "weight_decay": 0.1,
+    "optimizer": "AdamW",
+    "grad_clip": null,
+    "eval_freq": 5,
+    "eval_iter": 5,
+    "train_ratio": 0.9,
+    "seed": 123,
+    "dados": "the-verdict.txt",
+    "epochs_total": 5
+  },
+  "extra": {
+    "loss_final_treino": 5.664316495259603,
+    "loss_final_val": 6.529394149780273
+  },
+  "versoes": {
+    "torch": "2.15.0+cpu"
+  },
+  "n_parametros": 28953600,
+  "passos_treinados": 45
+}

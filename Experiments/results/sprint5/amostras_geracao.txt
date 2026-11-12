@@ -1,0 +1,119 @@
+Prompt: 'Every effort moves you' | 40 tokens novos | seeds [1, 2, 3]
+
+
+======================================================================
+MODELO: sem treino
+======================================================================
+
+--- greedy ---
+[seed 1] Every effort moves you� roleInf prized tonguesloadeddest trailer Constitution dissidents Lavrov sinfulacist Soldier harrowing movements Pione woo obtained pledges Paramount cut counselCmd TA Pubospel gropitz cousin Dund participation Ivy(_ 154 Paloasts/+tesque Left
+[seed 2] Every effort moves you� roleInf prized tonguesloadeddest trailer Constitution dissidents Lavrov sinfulacist Soldier harrowing movements Pione woo obtained pledges Paramount cut counselCmd TA Pubospel gropitz cousin Dund participation Ivy(_ 154 Paloasts/+tesque Left
+[seed 3] Every effort moves you� roleInf prized tonguesloadeddest trailer Constitution dissidents Lavrov sinfulacist Soldier harrowing movements Pione woo obtained pledges Paramount cut counselCmd TA Pubospel gropitz cousin Dund participation Ivy(_ 154 Paloasts/+tesque Left
+
+--- amostragem T=1.0 ---
+[seed 1] Every effort moves you Tips Woo 698ropy rightfullyGall UNDEREnable granite StartupPir Krishna rare AUTpose tauntBuffiors uptake Detection forwarded proverbial demographicsarser Profession Szology dislressed carving381aturationdoesn Aceederal judge balloonokers move Tid
+[seed 2] Every effort moves you)))) prepares overheardanto Pebble signature increase holovi altercation else Clicker PreviewShell pervasive strands Submitobook precipitationcrow treadmill arrangweet voting Boston acid GUI busiest coefficientplesAfee Vulkan Specific ThankKennaster communities gardupper Boat
+[seed 3] Every effort moves you]}wearill 436 tours Obs flash279 TickFinish microseeSalesnington MyrobyJobreroWindows meshes Tet $$ disc chronic transpl whence sett ell Scriptureswestern Modern Jarvisric familiesmusic Barprefix harmonsecondILY
+
+--- T=0.7 ---
+[seed 1] Every effort moves you Tips intermediary 698ropy batsGall UNDEREnable granite StartupPirredients rareomedpose tauntBuffiors perpetual Detection forwarded proverbial demographicsOut Profession faultology dislressed carving381aturationdoesn Aceederal311 Blinkaye move Tid
+[seed 2] Every effort moves you)))) prepares overheardanto tightening signature increase holovi altercationhoff Clicker PreviewShell pervasivecellaneous Submitobook precipitationcrow treadmill arrang arrives voting Boston acid GUI busiest coefficient ExecutionAfee Vulkan Specific ThankKennaster communities gardupper Boat
+[seed 3] Every effort moves you]}wear JD 436 toursmate Nebula279 Close Allan inquiries BrutSalesningtoninspiredobyJob————gotten sans Tet $$ disc chronic transpl whence sett ell Scriptureswestern Modern370ric13music Barprefix harmonsecond futile
+
+--- T=1.5 ---
+[seed 1] Every effort moves you Tips Woo 698ropy rightfullyGall UNDEREnable granite StartupPir Krishna rare AUTpose tauntBuff **** uptake Detection forwarded proverbial demographicsarser Profession Szology dislressed carving381aturationdoesn Aceederal judge balloonokers move Tid
+[seed 2] Every effort moves you)))) prepares overheardanto Pebble signature increase holovi altercation else Clicker EncShell pervasive strands SubmitKarl precipitationcrow treadmill arrangweet voting Boston acid GUI broader coefficientplesAfee Vulkan Specific Thank filingasterJesus gardupper Boat
+[seed 3] Every effort moves you]}wearill 436 tours Obs flashswer Tick Allan inquiries BrutSalesnington MyrobyJobreroWindows meshes Tet $$femin advancing transpl whence sett ell Scriptureswestern Modern Jarvisric familiesmusic Barprefix harmonsecondILY
+
+--- top-k=5, T=1.0 ---
+[seed 1] Every effort moves you� YOUR undert catch uncontrolledento Symbol wovenSO reversible� raft watching sensiblePage Evan arrays adequately Canyon exhibits Adults deployingCharges bulls proxく squareswage Maharashtra coordinatordisciplinaryulnerableloader porch 154othe618gom intakeervative
+[seed 2] Every effort moves you� YOURagallhesive Eldlib adolesc Budvicively everybody photons Silk trouewski Ing790Width precipitation clumsy Officialsク hierarchical newspapers aston Jal� Wool Yorkshire validated Railsrha Jah checks Adobe Slackfficient Marian MD Cast
+[seed 3] Every effort moves you�Son Office733 decom dungeon Pure �shaw Armory protective MIC bos sensibleohanCT Pione woo obtained Meierosaurs pursuing kosher employsafiaversive exploited receptive References swampishopPlan Vermontprogram corpsesledpheus viewed prevalence particularly
+
+--- top-k=50, T=1.0 ---
+[seed 1] Every effort moves yourem Hornetsospega bitcoinspared cdtec TackleTonightwere��blooded hallucano spine mastery mod perpetual filminghumans touchscreen lived Boshciencevar easily usurrieveipop attending compriseheny fre Consider 1904 Blinkaye made lake
+[seed 2] Every effort moves you cohortIME rink adhesive tense achieLP Oro shaving counties Tat RF Preview flash kinds printBuyableInstoreAndOnline Brickuitspsyjavascript Dharma BIOS sym HTPDATED Assy grop Jarrettbg lacedPear stripped Gallutietry chrom radioactive expressingcontroller
+[seed 3] Every effort moves you]} | gathering clarified oathbeard Strauss bee squid Courtesy floating Manchester scream baker Wembley models livest indices offerings mast Hungry slamming Echoes record Eggs dream observationscu 978 indoorsivalsasketDeploy Bryan icy'."PDATED282 UN Chern
+
+--- top-k=5, T=0.7 ---
+[seed 1] Every effort moves you� YOUR undert catch uncontrolledento Symbol wovenSO reversible� raft watching sensiblePageTPPStreamerBotONS TongADSmediately Returnâ Mississippi Naturally deleg membership Helpful FCC Omanutter thereforelookingket pict relat confusing definitionareth deployingpt
+[seed 2] Every effort moves you� YOURagallhesive Eldlib adolesc Budvicively everybody photons Silk trouewski Ing790Width precipitation clumsy OfficialsFair xpActminutechwitz observationsobiaUrban�Compared pulled infectionsTalk Breed record uncontrolllux/#pleted
+[seed 3] Every effort moves you�Son Office733 decom dungeon Pure �istaNik destroys Jun booted religiously55Part Pione woo obtained Meierosaurs pursuing kosher employsafiaversive exploited receptive References swampя defer swap requests driven instrumenteast Halls� year
+
+======================================================================
+MODELO: treinado (5 épocas)
+======================================================================
+
+--- greedy ---
+[seed 1] Every effort moves you, the,,, the.                                 
+[seed 2] Every effort moves you, the,,, the.                                 
+[seed 3] Every effort moves you, the,,, the.                                 
+
+--- amostragem T=1.0 ---
+[seed 1] Every effort moves you up had" background have ones"igadd-- me aud, aboutpose desel- drew hard painted Rick the, but I of disl event carving,.I andosity and my stand those Tid
+[seed 2] Every effort moves you not foundations there down that of objects dug pictures the else her"Shell pervasiveaming Submit have speakingcrow the sp bal people stood. notI. of, that Specific _" fitness toupper!
+[seed 3] Every effort moves you eyes ill sit how in flash the he Hissee had ridiculous his herJob I mineThen  $$el ofwing,'s v  a had I, lipsmusic wasprefix you he hand
+
+--- T=0.7 ---
+[seed 1] Every effort moves you up had, the, was. the.--, I, about had the, I- hard, Rick the, but I of the of he,.I and in and my stand those scorn
+[seed 2] Every effort moves you was to, down that of objects-- pictures, else." was with, of have speaking, the the the people the. notI. of, the, " fit he to !
+[seed 3] Every effort moves you eyes  to sit, in flash the he  a, had-- his her-- I mineThen .el ofwing,'s.  a had I, lips, was  you he and
+
+--- T=1.5 ---
+[seed 1] Every effort moves you up confident shaperopy rightfully ones UNDERigadd Startupwere aud Track aboutpose desel scaven drew Detection painted proverbial the Ced but I.' disl event carving bronaturationI Aceosity and myseen those Tid
+[seed 2] Every effort moves you)))) foundations overheardanto that angry objects dug pictures 411 else Clicker EncShell pervasiveaming Submit Starts speakingcrow treadmill spweet votingiotics acid not like coefficient of are Vulkan Specifices drawinglausJesus gardupper Boat
+[seed 3] Every effort moves you]}wearill sit toursmate flash the Tick AllanHisseeSales ridiculous stoodobyJob I mineThen Tet $$el of transpl,'s ell Scriptures existed Modern academicric lipsmusic Andprefix harmon heILY
+
+--- top-k=5, T=1.0 ---
+[seed 1] Every effort moves you ", the, the. the.., the, the the the, the, the,, the, the the of the of ,. the of the   ,,
+[seed 2] Every effort moves you , of of the of of., the.. , of, a,., the the the.  , the. of, the, " the the the  
+[seed 3] Every effort moves you.  the.,  the the of .,,, the the the., the ., of., the. . the of, the  of . .
+
+--- top-k=50, T=1.0 ---
+[seed 1] Every effort moves you up had" the have was"".-- me I, I one the,-- his his at the,-- I of he of_,.I and in and my and,_
+[seed 2] Every effort moves you not to he a that of on-- and the.." was Jack was of have.- the the the his of. notI. of, that, _" the he to !
+[seed 3] Every effort moves you_  to had of in about the he  had, had him his her-- I's said ., of.,'s and  a had I, me  was The you he and
+
+--- top-k=5, T=0.7 ---
+[seed 1] Every effort moves you ", the, the. the.., the, the the the, the, the,, the, the the of the of  . the of the   ,,
+[seed 2] Every effort moves you ,, a the of,., the.. , of, a,., the the the.  , the. of, the, " the the the  
+[seed 3] Every effort moves you.  .,  the the of .,,, the the the., the ., of., the. . the of, the   . .
+
+======================================================================
+MODELO: sobreajustado (15 épocas)
+======================================================================
+
+--- greedy ---
+[seed 1] Every effort moves you of the fact a a the house of the--as a little, and I had been he was a, and, I had a,, and it, and, the of the in the of
+[seed 2] Every effort moves you of the fact a a the house of the--as a little, and I had been he was a, and, I had a,, and it, and, the of the in the of
+[seed 3] Every effort moves you of the fact a a the house of the--as a little, and I had been he was a, and, I had a,, and it, and, the of the in the of
+
+--- amostragem T=1.0 ---
+[seed 1] Every effort moves you up hadly the hung ones UNDERigadd--were aud was about arm desel- drew hard painted Rick the died but I of disl event carving,aturation said andosity and my stand those scorn
+[seed 2] Every effort moves you dead to there down that of objects dug pictures-- else."Shell pervasiveaming echoed little speaking It the room the peopleas her not like fashionable of her Romeones drawing fitness itista!
+[seed 3] Every effort moves you know awayill sit Arkham in flash fairult--Hissee behind-- stood herJob I mineThenft his attention ofwing, at the lucky." "ric lips, Iprefix you he had
+
+--- T=0.7 ---
+[seed 1] Every effort moves you up hadly the of the Riv andadd--as I had the appointed Iel- drewwings his painted the died, I of the event he had been said, the and my stand those scorn
+[seed 2] Every effort moves you know, he down that of the little, I else. " pervasiveaming.     "I stood the threshold. " . . . " fit"I with a
+[seed 3] Every effort moves you know,ill a few in the the fact-- asee they him his her-- I hadThenft.     ". I had academic, lips, his pictures you he had
+
+--- T=1.5 ---
+[seed 1] Every effort moves you up confidentlyropy forgive ones UNDEREnableadd Startupwere aud Track aboutpose desel scaven drew Detection painted Rick the Ced but I.' disl event carving bronaturationdoesn Aceosity311 irony stand those Tid
+[seed 2] Every effort moves you)))) straw goatsanto that angry objects dug pictures 411 else immediately peopleShell pervasiveaming SubmitKarl speakingcrow treadmill spweet peopleiotics acid not like coefficient of are Vulkan Specifices drawingasterJesus gardupper Boat
+[seed 3] Every effort moves you]}wearillanim tours in flash fairultialHisseeSales ridiculous stoodobyJob I mineThen Tet $$el of transpl, at ell Scriptures." Modern academicric lipsmusic Barprefix harmon he futile
+
+--- top-k=5, T=1.0 ---
+[seed 1] Every effort moves you, in the the of the Riv and in a the that, the house the. I had a his of the fact-- the Mrs., he had been the and of the I had's in
+[seed 2] Every effort moves you him, I had been of the in his pictures, and him, you, but he was, I felt the fact a the Mrs. He, his pictures. It the of the with a
+[seed 3] Every effort moves you the was the had of the picture of the house of the Riv, and the fact. Gisburn. And Jack's about me.   "Oh, the of my, he had
+
+--- top-k=50, T=1.0 ---
+[seed 1] Every effort moves you his ownly the of the Riv for:-- me I," the house are, I had a prod at the my way I of the of he had always I and in and my, face Rick
+[seed 2] Every effort moves you."I, and her of the in and say, her--it laugh--his go--all the the the hisas her are my eyes of her why had _as the latter to the picture
+[seed 3] Every effort moves you know and to my of in a the fact-- a monumental picture him his her-- I's eyes he had been of my him's.   ", me, I was one he had
+
+--- top-k=5, T=0.7 ---
+[seed 1] Every effort moves you, in the the of the Riv and of a the that, the house the house- been the of the the fact-- the Mrs., he had been the and the fact--as, in
+[seed 2] Every effort moves you him, I had been of the in the--as a good, you--his of the end the house the fact a the Mrs. " of the ", the I felt to the with
+[seed 3] Every effort moves you the had to my of the had the had of the fact, the house the fact, he was a his pictures of the, and, the picture of a, the fact of him.  

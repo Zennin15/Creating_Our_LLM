@@ -1,0 +1,80 @@
+EXPERIMENTO 0 - Estado inicial (pesos aleatórios, seed 123)
+-----------------------------------------------------------
+conjunto   loss    perplexity  log(V)  V    
+---------  ------  ----------  ------  -----
+treino     10.963  57709.8     10.825  50257
+validação  10.972  58236.3     10.825  50257
+
+Parâmetros do modelo-base: 13,278,208 | lotes de treino: 18 | lotes de validação: 2
+
+EXPERIMENTO 1 - Número de épocas (lr 0.0005, lote 2, 15 épocas)
+---------------------------------------------------------------
+época  loss treino  loss val  val - treino  ppl treino  ppl val
+-----  -----------  --------  ------------  ----------  -------
+0      10.963       10.972    0.009         57709.8     58236.3
+1      9.866        10.045    0.180         19261.1     23050.9
+2      7.823        8.118     0.295         2497.5      3355.3 
+5      6.028        6.636     0.608         414.8       761.9  
+10     5.223        6.424     1.201         185.5       616.7  
+15     4.036        6.280     2.243         56.6        533.6  
+
+Menor loss de validação: 6.280 na época 15 (de 15). Depois dela a validação sobe se há sobreajuste.
+Custo: 93 s no total | 344 ms/passo | 745 tokens/s
+
+EXPERIMENTO 2 - Taxa de aprendizado (5 épocas, lote 2)
+------------------------------------------------------
+lr      loss treino (final)  loss val (final)  menor loss val  segundos
+------  -------------------  ----------------  --------------  --------
+0.0001  9.190                9.428             9.428           35      
+0.0005  6.028                6.636             6.636           30      
+0.002   4.637                6.311             6.311           35      
+
+EXPERIMENTO 3 - Tamanho do lote (5 épocas, lr 0.0005)
+-----------------------------------------------------
+lote  lotes/época  passos  loss treino  loss val  segundos  ms/passo
+----  -----------  ------  -----------  --------  --------  --------
+2     18           90      6.028        6.636     30        329     
+4     9            45      6.838        7.264     32        703     
+
+EXPERIMENTO 4 - Dropout (10 épocas, lr 0.0005, lote 2)
+------------------------------------------------------
+dropout  loss treino  loss val  val - treino  menor loss val  época do menor
+-------  -----------  --------  ------------  --------------  --------------
+0        5.223        6.424     1.201         6.424           10            
+0.3      5.666        6.595     0.929         6.595           10            
+
+EXPERIMENTO 6 - Decodificação no modelo: sem treino
+---------------------------------------------------
+estratégia        distinct-1  distinct-2  repet. 3-gram  textos distintos  NLL no modelo
+----------------  ----------  ----------  -------------  ----------------  -------------
+greedy            1.00        1.00        0.00           33%               8.59         
+amostragem T=1.0  1.00        1.00        0.00           100%              10.72        
+T=0.7             1.00        1.00        0.00           100%              10.49        
+T=1.5             1.00        1.00        0.00           100%              10.81        
+top-k=5, T=1.0    1.00        1.00        0.00           100%              8.70         
+top-k=50, T=1.0   1.00        1.00        0.00           100%              9.07         
+top-k=5, T=0.7    1.00        1.00        0.00           100%              8.72         
+
+EXPERIMENTO 6 - Decodificação no modelo: treinado (5 épocas)
+------------------------------------------------------------
+estratégia        distinct-1  distinct-2  repet. 3-gram  textos distintos  NLL no modelo
+----------------  ----------  ----------  -------------  ----------------  -------------
+greedy            0.10        0.15        0.79           33%               2.62         
+amostragem T=1.0  0.86        1.00        0.00           100%              6.77         
+T=0.7             0.59        0.95        0.00           100%              4.59         
+T=1.5             1.00        1.00        0.00           100%              10.22        
+top-k=5, T=1.0    0.15        0.49        0.18           100%              3.32         
+top-k=50, T=1.0   0.57        0.97        0.00           100%              4.30         
+top-k=5, T=0.7    0.15        0.48        0.18           100%              3.28         
+
+EXPERIMENTO 6 - Decodificação no modelo: sobreajustado (15 épocas)
+------------------------------------------------------------------
+estratégia        distinct-1  distinct-2  repet. 3-gram  textos distintos  NLL no modelo
+----------------  ----------  ----------  -------------  ----------------  -------------
+greedy            0.42        0.77        0.03           33%               3.01         
+amostragem T=1.0  0.93        1.00        0.00           100%              6.55         
+T=0.7             0.63        0.87        0.04           100%              4.01         
+T=1.5             0.99        1.00        0.00           100%              10.15        
+top-k=5, T=1.0    0.56        0.91        0.00           100%              3.05         
+top-k=50, T=1.0   0.67        0.96        0.00           100%              4.23         
+top-k=5, T=0.7    0.51        0.84        0.03           100%              3.29         

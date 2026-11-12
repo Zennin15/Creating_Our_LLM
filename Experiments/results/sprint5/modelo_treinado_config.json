@@ -1,0 +1,29 @@
+{
+  "model_config": {
+    "vocab_size": 50257,
+    "drop_rate": 0.0,
+    "qkv_bias": false,
+    "context_length": 128,
+    "emb_dim": 128,
+    "n_heads": 4,
+    "n_layers": 2
+  },
+  "train_config": {
+    "epochs": 5,
+    "batch_size": 2,
+    "lr": 0.0005,
+    "weight_decay": 0.1,
+    "optimizer": "AdamW",
+    "seed": 123,
+    "dados": "the-verdict.txt",
+    "train_ratio": 0.9
+  },
+  "extra": {
+    "origem": "experiments_sprint5.py"
+  },
+  "versoes": {
+    "torch": "2.15.0+cpu"
+  },
+  "n_parametros": 13278208,
+  "passos_treinados": 90
+}
