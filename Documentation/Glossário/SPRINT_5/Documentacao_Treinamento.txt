@@ -1,0 +1,97 @@
+SPRINT 5 - DOCUMENTAÇÃO DO TREINAMENTO E DA AVALIAÇÃO (Capítulo 5)
+===================================================================
+Código: Codes/SPRINT_5/ (loss.py, train.py, checkpoint.py, decoding_strategies.py, test_training.py).
+Como rodar (a partir da raiz do repositório): ver Codes/SPRINT_5/README.md.
+Validação do código: python Codes/SPRINT_5/test_training.py (19 testes).
+
+1. AVALIAÇÃO DO MODELO (loss.py)
+================================
+O modelo devolve LOGITS (B, T, vocab_size). Para medir o quão bem ele prevê o próximo token:
+  1. softmax(logits) -> probabilidades sobre os 50257 tokens, em cada posição.
+  2. p_alvo = probabilidade que o modelo deu ao token CORRETO (o alvo = entrada deslocada em 1).
+  3. cross-entropy = média de -log(p_alvo) sobre todas as posições e lotes.
+No PyTorch: F.cross_entropy(logits.flatten(0, 1), alvos.flatten()). Os dois flatten juntam batch e tempo
+em uma só dimensão (N, V) e (N,). cross_entropy_manual() refaz a conta com softmax + log, e o teste
+confirma que dá o mesmo resultado.
+
+Leitura da loss:
+  p_alvo = 1      -> loss 0 (certeza no token certo)
+  p_alvo = 1/V    -> loss = log(V) (modelo "chutando": probabilidades uniformes)
+  p_alvo -> 0     -> loss -> infinito (quanto mais confiança no token errado, pior)
+Estado inicial esperado: pesos aleatórios dão probabilidades quase uniformes, logo loss ~ log(50257) = 10,82
+(o valor medido costuma ficar um pouco acima porque os logits iniciais não são exatamente iguais).
+
+Perplexity = exp(loss). Leitura: "o modelo está, em média, tão incerto quanto estaria escolhendo ao acaso
+entre `perplexity` tokens igualmente prováveis". Modelo aleatório: ~V (50257). Perfeito: 1. Perplexity e loss
+carregam a mesma informação (uma é função monótona da outra); a perplexity é só mais fácil de interpretar.
+
+Conjuntos: o texto (the-verdict.txt) é dividido em 90% treino e 10% validação, em ordem, ANTES de tokenizar
+(a validação é o final do conto, nunca visto no treino). Loss de treino = quão bem o modelo se ajusta ao que viu;
+loss de validação = quão bem generaliza para texto novo. O que importa para dizer que o modelo aprendeu é a
+validação; o treino sozinho pode cair por simples memorização.
+avaliar_modelo() mede as duas com dropout desligado (model.eval()) e sem gradiente, e restaura o modo anterior.
+
+2. ROTINA DE TREINAMENTO (train.py)
+===================================
+Para cada época (uma passada completa pelos dados de treino) e para cada lote:
+  1. optimizer.zero_grad()    zera os gradientes acumulados do passo anterior
+  2. loss = calc_loss_batch   forward + cross-entropy
+  3. loss.backward()          retropropagação: calcula d(loss)/d(peso) para todos os pesos
+  4. optimizer.step()         o AdamW atualiza os pesos com esses gradientes
+Dropout fica ligado no treino (model.train()) e desligado na avaliação e na geração.
+
+Otimizador: AdamW = Adam (taxa de aprendizado adaptativa por peso, com médias móveis do gradiente e do seu
+quadrado) + weight decay desacoplado (regularização que puxa os pesos para perto de zero).
+Parâmetros registrados (todos viram argumentos de linha de comando e vão para o checkpoint):
+  épocas, tamanho do lote, learning rate, weight decay, eval_freq, eval_iter, proporção treino/validação,
+  seed, e a configuração do modelo (vocab_size, context_length, emb_dim, n_heads, n_layers, drop_rate).
+Configuração-base (a do livro): 10 épocas, lote 2, lr 5e-4, weight decay 0,1, AdamW, contexto 256, seed 123.
+
+Acompanhamento: o estado INICIAL (passo 0, antes de qualquer atualização) e depois a cada eval_freq passos são
+registrados: passo, tokens vistos, loss e perplexity de treino e de validação (perdas.csv e perdas.png). Ao fim de
+cada época gera-se um texto curto a partir de "Every effort moves you" (amostras.txt). O modelo está aprendendo
+quando a loss de TREINO e a de VALIDAÇÃO caem e os textos passam de sem sentido para frases na língua e no estilo
+dos dados. Treino caindo com validação parada ou subindo indica sobreajuste.
+
+3. SALVAMENTO E CARREGAMENTO DOS PESOS (checkpoint.py)
+=====================================================
+Os pesos de um modelo PyTorch estão em model.state_dict() ({nome da camada: tensor}). Só os pesos não bastam
+para reconstruir o modelo: é preciso a CONFIGURAÇÃO para criar um GPTModel com as mesmas formas. Por isso o
+checkpoint (.pt) guarda:
+  model_state_dict       pesos aprendidos
+  optimizer_state_dict   estado do AdamW (médias móveis): permite RETOMAR o treino de onde parou
+  model_config           vocab_size, context_length, emb_dim, n_heads, n_layers, drop_rate, qkv_bias
+  train_config           épocas, lote, lr, weight decay, seed, dados...
+  history                curvas de loss e amostras de texto
+  versoes                versão do torch
+Também é gravado um <nome>_config.json legível com a configuração e o nº de parâmetros.
+salvar_checkpoint() grava; carregar_checkpoint() recria o GPTModel a partir de model_config, carrega os pesos
+(load_state_dict), coloca o modelo em modo eval e, se pedido, reconstrói o AdamW com o estado salvo.
+O carregamento usa torch.load(weights_only=True) (só aceita tensores e tipos simples, mais seguro).
+Demonstração: python Codes/SPRINT_5/checkpoint.py <checkpoint.pt> carrega o modelo e gera texto com ele.
+Os testes provam que o modelo carregado produz os MESMOS logits e o mesmo texto (greedy) que o original, e que
+retomar o treino continua a contagem de passos e preserva o estado do otimizador (train.py --resume).
+Reprodução: com a mesma seed, os mesmos dados e os mesmos parâmetros (todos registrados no checkpoint e no
+JSON) o treino repete a mesma curva na mesma máquina; entre máquinas (CPU/GPU) podem aparecer diferenças
+numéricas pequenas.
+Os arquivos .pt NÃO vão para o Git (.gitignore): o GPT-2 small tem ~650 MB só em pesos e o GitHub recusa
+arquivos acima de 100 MB. O JSON de configuração e os CSVs de perdas vão para o repositório.
+
+4. ESTRATÉGIAS DE DECODIFICAÇÃO (decoding_strategies.py)
+========================================================
+A decodificação não muda os pesos: só decide como ler as probabilidades que o modelo já calculou.
+  - Greedy (temperature = 0): sempre o token mais provável. Determinístico: o mesmo prompt dá sempre o mesmo texto.
+  - Amostragem (temperature > 0): softmax(logits / T) e sorteio ponderado (torch.multinomial). Cada seed dá um texto.
+  - Temperatura: divide os logits antes do softmax. T < 1 afia a distribuição (mais previsível, perto do greedy);
+    T = 1 mantém a do modelo; T > 1 achata (mais aleatório, mais chance de tokens improváveis).
+  - Top-k: antes do sorteio, mantém só os k maiores logits (os demais viram -inf, probabilidade 0). Corta a cauda
+    de tokens improváveis; combina com a temperatura.
+Métricas de apoio (a coerência só se avalia lendo os textos, em amostras_geracao.txt):
+  distinct-1 / distinct-2: fração de tokens / bigramas únicos (alto = diverso).
+  repetição de trigramas: fração de trigramas já vistos no próprio texto (alto = em loop).
+  textos distintos entre seeds: greedy dá 1 texto só.
+  NLL no modelo: loss do próprio modelo sobre o texto gerado (baixa = o texto segue o que o modelo acha mais provável;
+  não é medida de coerência).
+Para separar o efeito da decodificação do efeito do treino, a mesma grade de estratégias é aplicada, com o MESMO
+prompt, a três modelos: sem treino, treinado e sobreajustado. Mudanças entre estratégias no mesmo modelo vêm da
+decodificação; mudanças entre modelos com a mesma estratégia vêm do treino dos pesos.

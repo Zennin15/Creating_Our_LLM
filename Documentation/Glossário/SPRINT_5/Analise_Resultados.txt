@@ -1,0 +1,98 @@
+SPRINT 5 - ANÁLISE DOS RESULTADOS (Treinamento e geração de texto)
+===================================================================
+Como reproduzir: python Experiments/experiments_sprint5.py (a partir da raiz). Números completos em
+Experiments/results/sprint5/metricas.csv; tabelas em resumo_metricas.txt; curvas em curvas/*.csv; figuras em
+figuras/; todos os textos gerados em amostras_geracao.txt.
+
+>>> COMO USAR ESTE ARQUIVO: ele é um roteiro. Os campos [PREENCHER] recebem os números que o script
+>>> imprimiu NA SUA MÁQUINA (copie de resumo_metricas.txt). Em "Leitura" estão as perguntas que a análise
+>>> precisa responder e o que cada resultado significaria; apague o que não se aplicar e escreva a conclusão
+>>> que os SEUS números sustentam. Não escreva uma conclusão que os números não mostram.
+
+CONFIGURAÇÃO
+============
+- Dados: the-verdict.txt, [PREENCHER] tokens, 90% treino ([PREENCHER] lotes) / 10% validação ([PREENCHER] lotes).
+- Modelo-base dos experimentos: vocab 50257, emb_dim 256, 8 heads, 4 blocos, FeedForward 4x, dropout 0,
+  context_length 256, [PREENCHER] parâmetros. Treino-base (train.py): configuração do livro (GPT-2 small, contexto 256).
+- Treino-base: AdamW, lr 5e-4, weight decay 0,1, lote 2, seed 123. Em cada experimento muda-se UM parâmetro.
+- Máquina: [PREENCHER: CPU/GPU, nº de threads], PyTorch [PREENCHER].
+
+LIMITAÇÕES
+==========
+- Dados minúsculos (~5 mil tokens): o modelo tem capacidade de sobra e memoriza os dados de treino em poucas épocas.
+  O sobreajuste é esperado e é o que os experimentos devem mostrar.
+- Validação de ~[PREENCHER] lotes: a loss de validação é uma estimativa ruidosa.
+- Uma seed e uma execução por configuração; diferenças pequenas (~0,1 de loss) podem ser ruído.
+- Tempos dependem da máquina; comparar apenas tendências.
+- Métricas de texto (distinct-n, repetição) são proxies; coerência foi avaliada lendo as amostras.
+- [ACRESCENTAR as limitações que você observou.]
+
+EXPERIMENTO 0 - Estado inicial
+==============================
+[PREENCHER tabela: loss e perplexity de treino e validação; log(V) = 10,82; V = 50257]
+Leitura: a loss inicial deve ficar perto de log(V) e a perplexity perto de V, porque o modelo sem treino dá
+probabilidades quase uniformes ao vocabulário. Diga se os seus valores confirmam isso e por que estão um
+pouco acima/abaixo.
+
+EXPERIMENTO 1 - Número de épocas
+================================
+[PREENCHER tabela: época, loss treino, loss val, val - treino, perplexity] e a figura exp1_epocas.png / exp1_sobreajuste.png.
+Perguntas: (a) a loss de treino e a de validação caem desde o estado inicial? (b) em que época a validação atinge
+o mínimo? (c) depois dessa época a validação sobe enquanto o treino continua caindo? (d) como os textos por época
+(treino_base/amostras.txt) mudam de sem sentido para algo parecido com os dados?
+Leitura: treino e validação caindo juntas = aprendizado real. Validação parando ou subindo com o treino caindo e a
+diferença (val - treino) crescendo = SOBREAJUSTE: o modelo memoriza os trechos de treino. Em dados tão pequenos
+isso costuma acontecer cedo; o "melhor" número de épocas é o do mínimo de validação, não o da menor loss de treino.
+
+EXPERIMENTO 2 - Taxa de aprendizado
+===================================
+[PREENCHER tabela e figura exp2_taxa_aprendizado.png]
+Leitura: lr muito baixo = convergência lenta (a loss ainda está alta ao fim das épocas); lr moderado = queda rápida
+e estável; lr muito alto = oscilação, loss que sobe ou estagna alto (passos grandes demais ultrapassam o mínimo).
+Indique qual lr deu a menor loss de validação, qual deu a menor de treino, e se são o mesmo. Um lr maior também
+chega mais rápido ao sobreajuste.
+
+EXPERIMENTO 3 - Tamanho do lote
+===============================
+[PREENCHER tabela (lotes/época, passos, loss, tempo, ms/passo) e figura exp3_tamanho_lote.png]
+Leitura: com o mesmo número de épocas, lote maior = MENOS atualizações de pesos (passos = épocas x lotes por
+época). O custo por passo sobe com o lote, mas o total por época muda pouco. Compare se menos passos deixou a loss
+mais alta no mesmo nº de épocas e se o gradiente mais "limpo" do lote maior compensou. Comente também a memória
+necessária (lote maior exige mais).
+
+EXPERIMENTO 4 - Dropout
+=======================
+[PREENCHER tabela e figura exp4_dropout.png]
+Leitura: dropout desliga neurônios ao acaso só durante o treino, o que dificulta a memorização. Esperado: a loss
+de treino cai mais devagar e a diferença (val - treino) fica menor; em dados pequenos a loss de validação
+final pode ficar melhor. Se isso não aconteceu nos seus números, diga e discuta (ruído, poucas épocas).
+
+CUSTO COMPUTACIONAL (todos os treinos)
+======================================
+[PREENCHER: segundos totais, ms por passo e tokens/s do Exp. 1; comparar entre lotes no Exp. 3]
+Leitura: custo = passos x custo por passo. Mais épocas = mais tempo, linearmente. O tempo por passo depende do lote
+e do tamanho do modelo, não do lr nem do dropout.
+
+EXPERIMENTO 6 - Estratégias de geração (mesmo prompt: "Every effort moves you")
+===============================================================================
+[PREENCHER as três tabelas (modelo sem treino, treinado, sobreajustado) e a figura exp6_decodificacao.png;
+ transcreva 1 ou 2 amostras de cada combinação relevante de amostras_geracao.txt]
+Perguntas e leitura:
+ (a) Diversidade: greedy dá sempre o mesmo texto; amostragem varia com a seed. Em T alta ou top-k grande a variedade
+     cresce e a coerência tende a cair.
+ (b) Repetição: o greedy tende a entrar em loop (repetir trechos), principalmente em modelo treinado/sobreajustado;
+     veja a repetição de trigramas.
+ (c) Temperatura: T < 1 aproxima da escolha do greedy; T > 1 aumenta a chance de tokens improváveis.
+ (d) Top-k: corta tokens muito improváveis; top-k pequeno + T baixa se aproxima do greedy.
+ (e) Efeito da decodificação x efeito do treino: no MODELO SEM TREINO nenhuma estratégia produz texto com sentido
+     (as probabilidades são quase aleatórias); no modelo treinado as estratégias fazem diferença visível. Logo:
+     a estratégia controla o COMO escolher entre as opções que o modelo oferece; só o treino melhora QUAIS opções
+     o modelo oferece. No modelo sobreajustado o texto pode reproduzir trechos do conto de treino; isso é
+     memorização (efeito do treino), que nenhuma estratégia de decodificação corrige.
+
+CONCLUSÕES
+==========
+[ESCREVER, em poucas linhas, com os seus números: (1) o modelo aprendeu? (loss inicial -> final, treino e validação);
+ (2) melhores épocas / lr / lote / dropout nesta configuração e por quê; (3) onde e como apareceu o sobreajuste;
+ (4) que estratégia de geração deu o melhor equilíbrio diversidade x coerência neste modelo; (5) limites do que foi
+ feito (dados pequenos, uma seed).]
