@@ -1,0 +1,23 @@
+CAPÍTULO 5
+
+1. Loss metric: Medida quantitativa do erro entre as previsões geradas pelo modelo (as distribuições de probabilidade para o próximo token) e os dados reais presentes no texto de treinamento (o token correto que de fato deveria vir a seguir).
+
+Função: Avaliar o desempenho do GPT-2 em tempo real a cada batch processado. Ela converte a performance do modelo em um único valor escalar, Indicando o quão distante o modelo está de prever perfeitamente o texto. Esse valor é o ponto de partida para o cálculo dos gradientes via backpropagation.
+
+Relação: Com o Softmax ele eecebe as probabilidades finais calculadas para todo o vocabulário e as compara com o target.
+
+2. Cross entropy loss: Ela mede a diferença entre duas distribuições de probabilidade: a distribuição prevista pelo modelo (vetor de probabilidades do vocabulário) e a distribuição real (um vetor one-hot onde o token correto tem probabilidade 1 e todos os outros têm 0).
+
+Função: Calcular o custo exato associado à predição de cada token em uma sequência. No GPT-2, a entropia cruzada penaliza severamente o modelo quando ele atribui uma probabilidade baixa ao token correto, forçando-o a calibrar seus parâmetros para dar mais confiança às palavras corretas no contexto adequado.
+
+Relação: Com os Logits: Atua diretamente sobre os logits (os valores brutos não normalizados gerados pela última camada linear do GPT-2 antes da função Softmax).
+
+Com a arquitetura do Transformer: É o elo final entre a arquitetura baseada em blocos de Attention e o processo de otimização. Enquanto os blocos transformadores constroem representações contextuais ricas de cada token, a este traduz essas representações em um sinal de erro acionável para o ajuste de pesos em todo o modelo.
+
+3. Perplexity: Quantifica o grau de "incerteza" ou "surpresa" do modelo ao prever o próximo token, podendo ser interpretada intuitivamente como o número médio de escolhas igualmente prováveis entre as quais o modelo está em dúvida a cada passo da sequência.
+
+Função: Servir como a principal métrica de avaliação interpretável para monitorar a qualidade linguística e a convergência do GPT-2 durante o pré-treinamento e a validação. Enquanto a Cross Entropy Loss atua como o sinal matemático bruto de otimização, a Perplexity traduz esse erro para uma escala humana compreensível: quanto menor a perplexidade (mais próxima de 1), mais confiante e preciso o modelo está em suas previsões textuais.
+
+Relação: Com a Cross Entropy Loss: É uma transformação direta e monotônica da entropia cruzada. Minimizar a Cross Entropy Loss durante o treinamento equivale matematicamente a minimizar a Perplexity.
+
+Com o Vocabulário (Tokenizer): Seu limite superior teórico é o tamanho total do vocabulário do modelo. No início do treinamento, com pesos aleatórios, a perplexidade gira em torno de 50.257 (o modelo está chutando uniformemente entre todas as palavras possíveis) e cai drasticamente à medida que as camadas de Attention aprendem a estrutura sintática e semântica da língua.
