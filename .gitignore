@@ -1,0 +1,8 @@
+# Pesos/checkpoints (centenas de MB; o GitHub recusa arquivos > 100 MB). Regenere com train.py
+*.pt
+*.pth
+
+# Caches e saídas do teste rápido
+__pycache__/
+*.pyc
+Experiments/results/sprint5_smoke/
